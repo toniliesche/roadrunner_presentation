@@ -1,0 +1,31 @@
+services:
+  dev-cli:
+    build:
+      context: dev-cli
+      args:
+        codeception_version: ${CODECEPTION_VERSION}
+        codeception_asserts_version: ${CODECEPTION_ASSERTS_VERSION}
+        php_version: ${PHP_VERSION}
+    image: phpughh/roadrunner/php:${PHP_VERSION}-cli
+
+  nginx:
+    build:
+      context: nginx
+      args:
+        nginx_version: ${NGINX_VERSION}
+    image: phpughh/roadrunner/nginx:${NGINX_VERSION}
+
+  php:
+    build:
+      context: php-fpm
+      args:
+        php_version: ${PHP_VERSION}
+    image: phpughh/roadrunner/php:${PHP_VERSION}-fpm
+
+  roadrunner:
+    build:
+      context: php-rr
+      args:
+        php_version: ${PHP_VERSION}
+        roadrunner_version: ${ROADRUNNER_VERSION}
+    image: phpughh/roadrunner/php:${PHP_VERSION}-rr
