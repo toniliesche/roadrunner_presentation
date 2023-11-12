@@ -1,0 +1,11 @@
+include:
+  - docker-compose.run.base.yml
+services:
+  php:
+    depends_on:
+      - mariadb
+    container_name: php
+    hostname: php
+    image: phpughh/roadrunner/php:${PHP_VERSION}-fpm
+    volumes:
+      - ../:/var/www/webapp

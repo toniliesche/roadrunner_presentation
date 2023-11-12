@@ -15,7 +15,12 @@ RUN apk add --no-cache nodejs npm
 
 ARG codeception_version
 ARG codeception_asserts_version
+ARG mariadb_root_password
 RUN composer global config minimum-stability dev && \
  composer global config prefer-stable true && \
  composer global require --prefer-stable codeception/codeception:${codeception_version} codeception/module-asserts:${codeception_asserts_version}
 
+COPY files/root/.my.cnf /root/.my.cnf
+
+RUN apk add --no-cache mariadb-client && \
+  echo -n ${mariadb_root_password} >> /root/.my.cnf

@@ -1,0 +1,29 @@
+services:
+  dev-cli:
+    container_name: dev-cli
+    hostname: dev-cli
+    image: phpughh/roadrunner/php:${PHP_VERSION}-cli
+    privileged: true
+    tty: true
+    stdin_open: true
+    working_dir: /var/www
+    volumes:
+      - ../../:/var/www
+  mariadb:
+    container_name: mariadb
+    hostname: mariadb
+    image: phpughh/roadrunner/mariadb:${MARIADB_VERSION}
+    environment:
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+  nginx:
+    depends_on:
+      - php
+    container_name: nginx
+    hostname: nginx
+    image: phpughh/roadrunner/nginx:${NGINX_VERSION}
+    volumes:
+      - ../:/var/www/webapp
+    ports:
+      - "8080:80"

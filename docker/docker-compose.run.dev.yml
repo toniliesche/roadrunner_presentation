@@ -1,0 +1,15 @@
+include:
+  - docker-compose.run.base.yml
+services:
+  php:
+    depends_on:
+      - mariadb
+    container_name: php
+    hostname: php
+    image: phpughh/roadrunner/php:${PHP_VERSION}-fpm-dev
+    environment:
+      - XDEBUG_HOST=${PHP_XDEBUG_HOST}
+      - XDEBUG_PORT=${PHP_XDEBUG_PORT}
+      - XDEBUG_CONNECT_ALWAYS=${PHP_XDEBUG_CONNECT_ALWAYS}
+    volumes:
+      - ../:/var/www/webapp

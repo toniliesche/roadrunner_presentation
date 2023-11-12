@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 cd /var/www/webapp
-su -c "rr serve" -s /bin/sh www-data
+

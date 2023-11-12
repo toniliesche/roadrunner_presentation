@@ -1,0 +1,36 @@
+---
+applicationName: roadrunner
+applicationVersion: 1.0.0
+logPath: /var/www/webapp/tmp/log
+application:
+  name: roadrunner
+  version: 1.0.0
+system:
+  host: dev01.test.int.phphug.hh
+  stage: dev
+database:
+  host: mariadb
+  username: root
+  password: phpughh
+  database: phpughh
+  cachePath: /var/www/webapp/tmp/cache/doctrine
+  proxyPath: /var/www/webapp/tmp/proxies
+  entityPaths:
+    - /var/www/webapp/src/Infrastructure/Database/Users
+  debug: false
+  cache: true
+framework:
+  di:
+    cachePath: /var/www/webapp/tmp/cache/php-di
+    debug: false
+    cache: true
+  log:
+    logLevel: debug
+    logPath: /var/www/webapp/tmp/log
+    logType: local
+    debug: false
+  router:
+    cachePath: /var/www/webapp/tmp/cache/fast-route
+    debug: false
+    cache: true
+...

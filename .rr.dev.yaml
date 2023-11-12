@@ -1,0 +1,30 @@
+#https://roadrunner.dev/docs/intro-config
+version: "3"
+rpc:
+  listen: tcp://127.0.0.1:6001
+server:
+  command: "php bin/roadrunner.php -dopcache.jit=tracing -dopcache.jit_buffer_size=100M"
+  user: "www-data"
+  env:
+    - XDEBUG_SESSION: 1
+    - PHP_IDE_CONFIG: serverName=localhost
+logs:
+  mode: production
+  level: info
+  encoding: json
+http:
+  fcgi:
+    address: tcp://0.0.0.0:9000
+  pool:
+    debug: true
+    num_workers: 1
+    max_jobs: 1000
+    allocate_timeout: 30s
+    reset_timeout: 30s
+    destroy_timeout: 30s
+    supervisor:
+      watch_tick: 1s
+      ttl: 3600s
+      idle_ttl: 120s
+      max_worker_memory: 1024
+      exec_ttl: 60s

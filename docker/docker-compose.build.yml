@@ -5,8 +5,16 @@ services:
       args:
         codeception_version: ${CODECEPTION_VERSION}
         codeception_asserts_version: ${CODECEPTION_ASSERTS_VERSION}
+        mariadb_root_password: ${MARIADB_ROOT_PASSWORD}
         php_version: ${PHP_VERSION}
     image: phpughh/roadrunner/php:${PHP_VERSION}-cli
+
+  mariadb:
+    build:
+      context: mariadb
+      args:
+        mariadb_version: ${MARIADB_VERSION}
+    image: phpughh/roadrunner/mariadb:${MARIADB_VERSION}
 
   nginx:
     build:
@@ -22,6 +30,13 @@ services:
         php_version: ${PHP_VERSION}
     image: phpughh/roadrunner/php:${PHP_VERSION}-fpm
 
+  php-dev:
+    build:
+      context: php-fpm-dev
+      args:
+        php_version: ${PHP_VERSION}
+    image: phpughh/roadrunner/php:${PHP_VERSION}-fpm-dev
+
   roadrunner:
     build:
       context: php-rr
@@ -29,3 +44,10 @@ services:
         php_version: ${PHP_VERSION}
         roadrunner_version: ${ROADRUNNER_VERSION}
     image: phpughh/roadrunner/php:${PHP_VERSION}-rr
+
+  roadrunner-dev:
+    build:
+      context: php-rr-dev
+      args:
+        php_version: ${PHP_VERSION}
+    image: phpughh/roadrunner/php:${PHP_VERSION}-rr-dev

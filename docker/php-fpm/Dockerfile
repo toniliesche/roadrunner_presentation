@@ -10,7 +10,8 @@ gettext-dev \
   libffi-dev \
   libmemcached-dev \
   libzip-dev \
-  linux-headers && \
+  linux-headers \
+  yaml-dev && \
   mkdir -p /usr/src/packages && \
   cd /usr/src/packages && \
   pecl bundle apcu && \
@@ -19,6 +20,7 @@ gettext-dev \
   pecl bundle msgpack && \
   pecl bundle mongodb && \
   pecl bundle redis && \
+  pecl bundle yaml && \
   docker-php-ext-install \
   bcmath \
   exif \
@@ -37,7 +39,8 @@ gettext-dev \
   /usr/src/packages/memcached \
   /usr/src/packages/mongodb \
   /usr/src/packages/msgpack \
-  /usr/src/packages/redis && \
+  /usr/src/packages/redis \
+  /usr/src/packages/yaml && \
   rm -Rf /usr/src/packages/* && \
   mkdir -p /entry-point.d
 
