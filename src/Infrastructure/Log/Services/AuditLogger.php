@@ -13,7 +13,7 @@ use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\MessageProcessorInterfa
 final readonly class AuditLogger implements AuditLoggerInterface
 {
     public function __construct(
-        private LoggerInterface $auditLogger,
+        private LoggerInterface $logger,
         private MessageProcessorInterface $messageProcessor,
         private ContextProcessorInterface $contextProcessor
     ) {
@@ -22,7 +22,7 @@ final readonly class AuditLogger implements AuditLoggerInterface
     public function log(string $message, array $context = []): void
     {
         $context = $this->contextProcessor->processContext(LogLevel::INFO, $context);
-        $this->auditLogger->info(
+        $this->logger->info(
             $this->messageProcessor->processMessage($message, $context),
             $context,
         );

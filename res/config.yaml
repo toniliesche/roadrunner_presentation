@@ -17,7 +17,7 @@ database:
   proxyPath: /var/www/webapp/tmp/proxies
   entityPaths:
     - /var/www/webapp/src/Infrastructure/Database/Users
-  debug: false
+  debug: true
   cache: true
 framework:
   di:

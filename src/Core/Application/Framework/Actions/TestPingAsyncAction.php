@@ -11,13 +11,13 @@ use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Throwable;
 use ToniLiesche\Roadrunner\Core\Domain\Test\Interfaces\PingServiceInterface;
-use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\AuditLoggerInterface;
+use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
 use function json_encode;
 
 readonly final class TestPingAsyncAction
 {
-    public function __construct(private AuditLoggerInterface $logService, private PingServiceInterface $pingService)
+    public function __construct(private PingServiceInterface $pingService)
     {
     }
 
@@ -30,7 +30,7 @@ readonly final class TestPingAsyncAction
         $stopWatch = new Stopwatch();
         $stopwatchEvent = $stopWatch->start('runtime');
 
-        $this->logService->log('Accessing test ping async page.');
+        Logging::audit()?->log('Accessing test ping async page.');
         for ($i = 0; $i < 500; $i++) {
             $promises = [];
             for ($j = 0; $j < 2; $j++) {

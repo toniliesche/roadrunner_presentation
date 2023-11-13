@@ -34,7 +34,19 @@ clean:
 	if [ -d tmp/proxies ]; then sudo rm -rf tmp/proxies/*; fi
 
 logs:
-	tail -f tmp/log/*.log
+	tail -n 100 -f tmp/log/*.log
+
+audit-logs:
+	tail -n 100 -f tmp/log/*audit.log
+
+app-logs:
+	tail -n 100 -f tmp/log/*app.log
+
+sql-logs:
+	tail -n 100 -f tmp/log/*sql.log
+
+nginx-logs:
+	docker logs --tail 100 -f nginx
 
 down:
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh down

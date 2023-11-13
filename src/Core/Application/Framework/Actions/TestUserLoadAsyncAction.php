@@ -10,14 +10,17 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Throwable;
+use ToniLiesche\Roadrunner\Core\Application\Framework\Traits\RequestParserAwareTrait;
 use ToniLiesche\Roadrunner\Core\Domain\Test\Interfaces\UserServiceInterface;
-use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\AuditLoggerInterface;
+use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
 use function json_encode;
 
-readonly final class TestUserLoadAsyncAction
+final class TestUserLoadAsyncAction
 {
-    public function __construct(private AuditLoggerInterface $logService, private UserServiceInterface $userService)
+    use RequestParserAwareTrait;
+
+    public function __construct(private readonly UserServiceInterface $userService)
     {
     }
 
@@ -30,11 +33,12 @@ readonly final class TestUserLoadAsyncAction
         $stopWatch = new Stopwatch();
         $stopwatchEvent = $stopWatch->start('runtime');
 
-        $this->logService->log('Accessing test user async page.');
+        $userId = $this->getRequestParser()->getNumericQueryParam($request, 'userId');
+        Logging::audit()?->log('Accessing test user async page.', ['userId' => $userId]);
         for ($i = 0; $i < 500; $i++) {
             $promises = [];
             for ($j = 0; $j < 2; $j++) {
-                $promises[] = $this->userService->getUserAsync('http://nginx', 1);
+                $promises[] = $this->userService->getUserAsync('http://nginx', $userId);
             }
 
             Utils::unwrap($promises);

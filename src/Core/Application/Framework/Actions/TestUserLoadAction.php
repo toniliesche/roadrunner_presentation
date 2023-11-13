@@ -9,14 +9,17 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Throwable;
+use ToniLiesche\Roadrunner\Core\Application\Framework\Traits\RequestParserAwareTrait;
 use ToniLiesche\Roadrunner\Core\Domain\Test\Interfaces\UserServiceInterface;
-use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\AuditLoggerInterface;
+use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
 use function json_encode;
 
-readonly final class TestUserLoadAction
+final class TestUserLoadAction
 {
-    public function __construct(private AuditLoggerInterface $logService, private UserServiceInterface $userService)
+    use RequestParserAwareTrait;
+
+    public function __construct(private readonly UserServiceInterface $userService)
     {
     }
 
@@ -29,9 +32,10 @@ readonly final class TestUserLoadAction
         $stopWatch = new Stopwatch();
         $stopwatchEvent = $stopWatch->start('runtime');
 
-        $this->logService->log('Accessing test user page.');
+        $userId = $this->getRequestParser()->getNumericQueryParam($request, 'userId');
+        Logging::audit()?->log('Accessing test user page.', ['userId' => $userId]);
         for ($i = 0; $i < 1000; $i++) {
-            $response = $this->userService->getUser('http://nginx', 1);
+            $response = $this->userService->getUser('http://nginx', $userId);
         }
 
         $stopwatchEvent->stop();

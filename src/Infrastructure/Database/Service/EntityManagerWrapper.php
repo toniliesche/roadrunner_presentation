@@ -15,6 +15,7 @@ readonly final class EntityManagerWrapper implements RunBeforeRequestInterface
 
     public function runBeforeRequest(): void
     {
+        return;
         $this->entityManager->clear();
     }
 }

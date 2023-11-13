@@ -7,17 +7,16 @@ namespace ToniLiesche\Roadrunner\Infrastructure\Database\Users;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Psr\Log\LogLevel;
 use ToniLiesche\Roadrunner\Infrastructure\Database\Shared\EntityClassDoesNotExistException;
 use ToniLiesche\Roadrunner\Infrastructure\Database\Traits\OrmAwareTrait;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Enums\LogCategory;
-use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\ApplicationLoggerInterface;
+use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
 readonly final class UserRepository
 {
     use OrmAwareTrait;
 
-    public function __construct(private ApplicationLoggerInterface $logger, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
@@ -27,7 +26,7 @@ readonly final class UserRepository
      */
     public function getUser(int $userId): ?UserEntity
     {
-        $this->logger->debug(LogCategory::DATABASE, 'Requesting user from database by id.', ['userId' => $userId]);
+        Logging::application()?->debug(LogCategory::DATABASE, 'Requesting user from database by id.', ['userId' => $userId]);
 
         $repository = $this->getRepository(UserEntity::class);
 //        $queryBuilder = $this->createQueryBuilder('u', UserEntity::class);

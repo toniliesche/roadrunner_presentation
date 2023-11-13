@@ -23,7 +23,7 @@ use ToniLiesche\Roadrunner\Infrastructure\Engine\Services\RoadrunnerRequestClean
 use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Exceptions\FileSystemException;
 use ToniLiesche\Roadrunner\Infrastructure\Http\Enums\HttpCode;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Enums\LogCategory;
-use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\ApplicationLoggerInterface;
+use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
 /**
  * @throws JsonException
@@ -92,9 +92,9 @@ function bootstrap_app(string $runtime): App
 
     $containerFactory = new ContainerFactory();
     $container = $containerFactory->createContainer($config, new ContainerConfigurator());
-    $logger = $container->get(ApplicationLoggerInterface::class);
-
-    $logger->debug(LogCategory::FRAMEWORK, 'Container created. Start application bootstrap.');
+    
+    Logging::init($container);
+    Logging::application()?->debug(LogCategory::FRAMEWORK, 'Container created. Start application bootstrap.');
 
     $appFactory = new AppFactory(
         $container,
@@ -114,9 +114,7 @@ function bootstrap_roadrunner(): PSR7Worker
 }
 
 /**
- * @throws ContainerExceptionInterface
  * @throws JsonException
- * @throws NotFoundExceptionInterface
  */
 function run_webapp_fpm(string $appname): void
 {
@@ -130,17 +128,15 @@ function run_webapp_fpm(string $appname): void
 
     $container = $app->getContainer();
     if (null === $container) {
-        error_500('something went wrong');
+        error_500('Container could not be retrieved');
     }
 
-    $logger = $container->get(ApplicationLoggerInterface::class);
-
     try {
-        $logger->debug(LogCategory::FRAMEWORK, 'Starting request processing.');
+        Logging::application()?->debug(LogCategory::FRAMEWORK, 'Starting request processing.');
         $app->run();
-        $logger->debug(LogCategory::FRAMEWORK, 'Finished request processing.');
+        Logging::application()?->debug(LogCategory::FRAMEWORK, 'Finished request processing.');
     } catch (Throwable $t) {
-        $logger->error(LogCategory::FRAMEWORK, 'Got uncaught throwable while processing request.', ['error' => $t->getMessage()]);
+        Logging::application()?->error(LogCategory::FRAMEWORK, 'Got uncaught throwable while processing request.', ['error' => $t->getMessage()]);
         error_500($t->getMessage());
     }
 }
@@ -160,11 +156,10 @@ function run_webapp_rr(string $appname): void
 
     $container = $app->getContainer();
     if (null === $container) {
-        error_500('something went wrong');
+        error_500('Container could not be retrieved');
     }
 
-    $logger = $container->get(ApplicationLoggerInterface::class);
-    $logger->debug(LogCategory::FRAMEWORK, 'Application bootstrap complete. Start listening.');
+    Logging::application()?->debug(LogCategory::FRAMEWORK, 'Application bootstrap complete. Start listening.');
 
     $requestIdService = $container->get(RequestIdService::class);
     $requestIdService->generateRequestId();
@@ -177,35 +172,35 @@ function run_webapp_rr(string $appname): void
             $request = $psr7worker->waitRequest();
 
             if (null === $request) {
-                $logger->debug(LogCategory::FRAMEWORK, 'Stopping worker.');
+                Logging::application()?->debug(LogCategory::FRAMEWORK, 'Stopping worker.');
                 break;
             }
 
-            $logger->debug(LogCategory::FRAMEWORK, 'Got new request.');
+            Logging::application()?->debug(LogCategory::FRAMEWORK, 'Got new request.');
         } catch (Throwable $t) {
-            $logger->error(LogCategory::FRAMEWORK, 'Failed initializing request.', ['error' => $t->getMessage()]);
+            Logging::application()?->error(LogCategory::FRAMEWORK, 'Failed initializing request.', ['error' => $t->getMessage()]);
             $psr7worker->respond(new Response(500, [], error_output(500, 'something went wrong')));
             $roadrunnerRequestCleaningService->processAfterRequest();
             continue;
         }
 
         try {
-            $logger->debug(LogCategory::FRAMEWORK, 'Performing pre-request tasks.');
+            Logging::application()?->debug(LogCategory::FRAMEWORK, 'Performing pre-request tasks.');
             $requestIdService->parseReferralId($request);
             $roadrunnerRequestCleaningService->processBeforeRequest();
         } catch (Throwable $t) {
-            $logger->error(LogCategory::FRAMEWORK, 'Failed running pre-request tasks.', ['error' => $t->getMessage()]);
+            Logging::application()?->error(LogCategory::FRAMEWORK, 'Failed running pre-request tasks.', ['error' => $t->getMessage()]);
             continue;
         }
 
         try {
-            $logger->debug(LogCategory::FRAMEWORK, 'Starting request processing.');
+            Logging::application()?->debug(LogCategory::FRAMEWORK, 'Starting request processing.');
             $response = $app->handle($request);
 
             $psr7worker->respond($response);
-            $logger->debug(LogCategory::FRAMEWORK, 'Finished request processing.');
+            Logging::application()?->debug(LogCategory::FRAMEWORK, 'Finished request processing.');
         } catch (Throwable $t) {
-            $logger->error(LogCategory::FRAMEWORK, 'Got uncaught throwable while processing request.', ['error' => $t->getMessage()]);
+            Logging::application()?->error(LogCategory::FRAMEWORK, 'Got uncaught throwable while processing request.', ['error' => $t->getMessage()]);
             $psr7worker->respond(new Response(500, [], error_output(500, 'something went wrong')));
         } finally {
             $roadrunnerRequestCleaningService->processAfterRequest();

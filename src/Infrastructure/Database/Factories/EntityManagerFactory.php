@@ -27,7 +27,7 @@ use ToniLiesche\Roadrunner\Infrastructure\Engine\Services\RoadrunnerRequestClean
 use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Exceptions\FileSystemException;
 use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Models\Directory;
 use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Service\FileSystemService;
-use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\SqlLoggerInterface;
+use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
 readonly final class EntityManagerFactory
 {
@@ -98,8 +98,8 @@ readonly final class EntityManagerFactory
             $databaseConfig->getProxyPath(),
         );
 
-        if (true === $databaseConfig->isDebugEnabled()) {
-            $sqlLogMiddleware = new Middleware($container->get(SqlLoggerInterface::class));
+        if (true === $databaseConfig->isDebugEnabled() && null !== ($logger = Logging::sql())) {
+            $sqlLogMiddleware = new Middleware($logger);
             $config->setMiddlewares([$sqlLogMiddleware]);
         }
 

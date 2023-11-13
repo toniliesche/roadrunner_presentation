@@ -10,13 +10,13 @@ use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Throwable;
 use ToniLiesche\Roadrunner\Core\Domain\Test\Interfaces\PingServiceInterface;
-use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\AuditLoggerInterface;
+use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
 use function json_encode;
 
 readonly final class TestPingAction
 {
-    public function __construct(private AuditLoggerInterface $logService, private PingServiceInterface $pingService)
+    public function __construct(private PingServiceInterface $pingService)
     {
     }
 
@@ -29,8 +29,8 @@ readonly final class TestPingAction
         $stopWatch = new Stopwatch();
         $stopwatchEvent = $stopWatch->start('runtime');
 
-        $this->logService->log('Accessing test ping page.');
-        for ($i = 0; $i < 1000; $i++) {
+        Logging::audit()?->log('Accessing test ping page.');
+        for ($i = 0; $i < 1; $i++) {
             $response = $this->pingService->ping('http://nginx');
         }
 
