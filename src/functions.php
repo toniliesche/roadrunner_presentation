@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Slim\App;
 use Spiral\RoadRunner\Http\PSR7Worker;
@@ -71,10 +70,12 @@ function error_500(string $message): never
 
 /**
  * @throws ContainerBuildFailedException
+ * @throws ContainerExceptionInterface
  * @throws FileSystemException
  * @throws InvalidConfigValueException
  * @throws JsonException
  * @throws MissingConfigValueException
+ * @throws NotFoundExceptionInterface
  */
 function bootstrap_app(string $runtime): App
 {
@@ -91,6 +92,9 @@ function bootstrap_app(string $runtime): App
 
     $containerFactory = new ContainerFactory();
     $container = $containerFactory->createContainer($config, new ContainerConfigurator());
+    $logger = $container->get(ApplicationLoggerInterface::class);
+
+    $logger->debug(LogCategory::FRAMEWORK, 'Container created. Start application bootstrap.');
 
     $appFactory = new AppFactory(
         $container,
@@ -110,7 +114,9 @@ function bootstrap_roadrunner(): PSR7Worker
 }
 
 /**
+ * @throws ContainerExceptionInterface
  * @throws JsonException
+ * @throws NotFoundExceptionInterface
  */
 function run_webapp_fpm(string $appname): void
 {
@@ -122,9 +128,19 @@ function run_webapp_fpm(string $appname): void
         error_500($t->getMessage());
     }
 
+    $container = $app->getContainer();
+    if (null === $container) {
+        error_500('something went wrong');
+    }
+
+    $logger = $container->get(ApplicationLoggerInterface::class);
+
     try {
+        $logger->debug(LogCategory::FRAMEWORK, 'Starting request processing.');
         $app->run();
+        $logger->debug(LogCategory::FRAMEWORK, 'Finished request processing.');
     } catch (Throwable $t) {
+        $logger->error(LogCategory::FRAMEWORK, 'Got uncaught throwable while processing request.', ['error' => $t->getMessage()]);
         error_500($t->getMessage());
     }
 }
