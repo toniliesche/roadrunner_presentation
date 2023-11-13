@@ -8,14 +8,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\IndexAction;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\PingAction;
+use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\TestPingAction;
+use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\TestPingAsyncAction;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\RequestIdServiceFactory;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Interfaces\ContainerConfiguratorInterface;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Interfaces\UuidServiceInterface;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Services\RequestIdService;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Services\UuidService;
-use ToniLiesche\Roadrunner\Core\Domain\Ping\Factories\PingServiceFactory;
-use ToniLiesche\Roadrunner\Core\Domain\Ping\Interfaces\PingServiceInterface;
-use ToniLiesche\Roadrunner\Core\Domain\Ping\Services\PingService;
+use ToniLiesche\Roadrunner\Core\Domain\Test\Factories\PingServiceFactory;
+use ToniLiesche\Roadrunner\Core\Domain\Test\Factories\UserServiceFactory;
+use ToniLiesche\Roadrunner\Core\Domain\Test\Interfaces\PingServiceInterface;
+use ToniLiesche\Roadrunner\Core\Domain\Test\Interfaces\UserServiceInterface as UserServiceInterfaceTest;
+use ToniLiesche\Roadrunner\Core\Domain\Test\Services\PingService;
+use ToniLiesche\Roadrunner\Core\Domain\Test\Services\UserService as UserServiceTest;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Interfaces\UserDataProviderInterface;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Interfaces\UserServiceInterface;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Services\UserService;
@@ -78,10 +83,17 @@ final readonly class ContainerConfigurator implements ContainerConfiguratorInter
             SqlLogger::class => factory(SqlLoggerFactory::class),
             SqlLoggerFactory::class => autowire(),
 
+            TestPingAction::class => autowire(),
+            TestPingAsyncAction::class => autowire(),
+
             UserDataProviderInterface::class => get(UserDataProvider::class),
             UserDataProvider::class => autowire(),
 
             UserRepository::class => autowire(),
+
+            UserServiceInterfaceTest::class => get(UserServiceTest::class),
+            UserServiceTest::class => factory(UserServiceFactory::class),
+            UserServiceFactory::class => autowire(),
 
             UserServiceInterface::class => get(UserService::class),
             UserService::class => autowire(),
