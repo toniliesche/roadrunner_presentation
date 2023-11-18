@@ -12,6 +12,7 @@ use ToniLiesche\Roadrunner\Core\Application\Framework\Enums\PHPRuntime;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Interfaces\MiddlewareConfiguratorInterface;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Middlewares\RequestIdMiddleware;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Models\Config;
+use ToniLiesche\Roadrunner\Core\Application\Framework\Services\ErrorHandler;
 
 final readonly class MiddlewareConfigurator implements MiddlewareConfiguratorInterface
 {
@@ -28,6 +29,7 @@ final readonly class MiddlewareConfigurator implements MiddlewareConfiguratorInt
 
         /** These must be added last because they need to be executed first */
         $app->addRoutingMiddleware();
-        $app->addErrorMiddleware(true, true, true);
+        $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+        $errorMiddleware->setDefaultErrorHandler($container->get(ErrorHandler::class));
     }
 }

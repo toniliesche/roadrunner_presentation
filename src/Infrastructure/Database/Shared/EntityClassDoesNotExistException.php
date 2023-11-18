@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Infrastructure\Database\Shared;
 
-use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\BaseException;
+use ToniLiesche\Roadrunner\Infrastructure\Shared\Exceptions\DataProviderException;
 
-final class EntityClassDoesNotExistException extends BaseException
+final class EntityClassDoesNotExistException extends DataProviderException
 {
 
 }

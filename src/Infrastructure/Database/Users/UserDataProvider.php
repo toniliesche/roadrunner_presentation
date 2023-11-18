@@ -4,30 +4,41 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Infrastructure\Database\Users;
 
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\Exceptions\ValidationFailedException;
+use Doctrine\DBAL\Exception;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Exceptions\ValidationFailedException;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Interfaces\UserDataProviderInterface;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Models\User;
 use ToniLiesche\Roadrunner\Infrastructure\Database\Shared\EntityClassDoesNotExistException;
-use ToniLiesche\Roadrunner\Infrastructure\Http\Exceptions\ItemNotFoundException;
+use ToniLiesche\Roadrunner\Infrastructure\Shared\Exceptions\DataMappingException;
+use ToniLiesche\Roadrunner\Infrastructure\Shared\Exceptions\DataProviderException;
+use ToniLiesche\Roadrunner\Infrastructure\Shared\Exceptions\ItemNotFoundException;
 
 readonly final class UserDataProvider implements UserDataProviderInterface
 {
-    public function __construct(private UserRepository $userRepository, private UserMapper $userMapper)
+    public function __construct(private UserRepository $userRepository)
     {
     }
 
     /**
-     * @throws EntityClassDoesNotExistException
+     * @throws DataMappingException
+     * @throws DataProviderException
      * @throws ItemNotFoundException
-     * @throws ValidationFailedException
      */
     public function getUser(int $userId): User
     {
-        $userEntity = $this->userRepository->getUser($userId);
+        try {
+            $userEntity = $this->userRepository->getUser($userId);
+        } catch (Exception|EntityClassDoesNotExistException $ex) {
+            throw new DataProviderException('Encountered error while fetching user from database.', $ex->getCode(), $ex);
+        }
         if (null === $userEntity) {
             throw new ItemNotFoundException(\sprintf('Could not find user with id "%s"', $userId));
         }
 
-        return $this->userMapper->databaseToModel($userEntity);
+        try {
+            return UserMapper::databaseToModel($userEntity);
+        } catch (ValidationFailedException $ex) {
+            throw new DataMappingException('Encountered error while mapping user do business object.', $ex->getCode(), $ex);
+        }
     }
 }

@@ -29,8 +29,8 @@ readonly final class DIConfig
         } else {
             $this->cachingEnabled = $data['cache'] ?? false;
         }
-        $this->compilationEnabled = $data['compile'] ?? true;
-        $this->proxyGenerationEnabled = $data['proxies'] ?? true;
+        $this->compilationEnabled = $data['compile'] ?? false;
+        $this->proxyGenerationEnabled = $data['proxies'] ?? false;
 
         if ($this->cachingEnabled || $this->compilationEnabled || $this->proxyGenerationEnabled) {
             $this->cachePath = $data['cachePath'] ?? throw new MissingConfigValueException(

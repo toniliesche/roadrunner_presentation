@@ -34,17 +34,23 @@ readonly final class DatabaseConfig
      */
     public function __construct(array $data)
     {
+        $this->port = $data['port'] ?? 3306;
+        $this->debugEnabled = $data['debug'] ?? false;
+        $this->cachingEnabled = $data['cache'] ?? false;
+
         $this->host = $data['host'] ?? throw new MissingConfigValueException('Missing mandatory setting "host" in database config section');
         $this->username = $data['username'] ?? throw new MissingConfigValueException('Missing mandatory setting "username" in database config section');
         $this->password = $data['password'] ?? throw new MissingConfigValueException('Missing mandatory setting "password" in database config section');
         $this->database = $data['database'] ?? throw new MissingConfigValueException('Missing mandatory setting "database" in database config section');
-        $this->cachePath = $data['cachePath'] ?? throw new MissingConfigValueException('Missing mandatory setting "cachePath" in database config section');
+
+        if ($this->cachingEnabled) {
+            $this->cachePath = $data['cachePath'] ?? throw new MissingConfigValueException(
+                'Missing mandatory setting "cachePath" in database config section'
+            );
+        }
+
         $this->proxyPath = $data['proxyPath'] ?? throw new MissingConfigValueException('Missing mandatory setting "proxyPath" in database config section');
         $this->entityPaths = $data['entityPaths'] ?? [];
-
-        $this->port = $data['port'] ?? 3306;
-        $this->debugEnabled = $data['debug'] ?? false;
-        $this->cachingEnabled = $data['cache'] ?? true;
     }
 
     public function getHost(): string

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Core\Domain\Users\Models;
 
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\Exceptions\ValidationFailedException;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Exceptions\ValidationFailedException;
 use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\ExistsRule;
 use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsIntRule;
 use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsNotEmptyRule;
@@ -34,6 +34,10 @@ readonly class User
         ];
 
         $this->validateRules($rules, $data);
+
+        $this->id = $data['id'];
+        $this->username = $data['username'];
+        $this->name = $data['name'];
     }
 
     public function getId(): int

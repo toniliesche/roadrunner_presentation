@@ -1,7 +1,4 @@
 ---
-applicationName: roadrunner
-applicationVersion: 1.0.0
-logPath: /var/www/webapp/tmp/log
 application:
   name: roadrunner
   version: 1.0.0
@@ -18,12 +15,14 @@ database:
   entityPaths:
     - /var/www/webapp/src/Infrastructure/Database/Users
   debug: true
-  cache: true
+  cache: false
 framework:
   di:
     cachePath: /var/www/webapp/tmp/cache/php-di
     debug: false
-    cache: true
+    cache: false
+    compile: false
+    proxies: false
   log:
     logLevel: debug
     logPath: /var/www/webapp/tmp/log
@@ -32,5 +31,12 @@ framework:
   router:
     cachePath: /var/www/webapp/tmp/cache/fast-route
     debug: false
-    cache: true
+    cache: false
+  templating:
+    baseVars:
+      base_page_title: Roadrunner
+      base_copyright_year: "2023"
+    cachePath: /var/www/webapp/tmp/cache/twig
+    cache: false
+    templatePath: /var/www/webapp/templates
 ...

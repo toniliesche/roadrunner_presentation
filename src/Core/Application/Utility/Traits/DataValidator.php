@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Core\Application\Utility\Traits;
 
+use ToniLiesche\Roadrunner\Core\Application\Utility\Exceptions\ValidationFailedException;
 use ToniLiesche\Roadrunner\Core\Application\Utility\Interfaces\ValidationInterface;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\Exceptions\ValidationFailedException;
 
 trait DataValidator
 {

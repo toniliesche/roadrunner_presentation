@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules;
 
+use ToniLiesche\Roadrunner\Core\Application\Utility\Exceptions\ValidationFailedException;
 use ToniLiesche\Roadrunner\Core\Application\Utility\Interfaces\ValidationInterface;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\Exceptions\ValidationFailedException;
 
 readonly final class IsNotEmptyRule implements ValidationInterface
 {

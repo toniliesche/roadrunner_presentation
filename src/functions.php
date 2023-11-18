@@ -15,22 +15,24 @@ use ToniLiesche\Roadrunner\Core\Application\Framework\Configuration\RouteConfigu
 use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\ContainerBuildFailedException;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\InvalidConfigValueException;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\MissingConfigValueException;
+use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\UnexpectedValueException;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\AppFactory;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\ApplicationConfigFactory;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\ContainerFactory;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Services\RequestIdService;
 use ToniLiesche\Roadrunner\Infrastructure\Engine\Services\RoadrunnerRequestCleaningService;
 use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Exceptions\FileSystemException;
-use ToniLiesche\Roadrunner\Infrastructure\Http\Enums\HttpCode;
+use ToniLiesche\Roadrunner\Infrastructure\Http\Enums\HttpPhrase;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Enums\LogCategory;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
 /**
  * @throws JsonException
+ * @throws UnexpectedValueException
  */
 function error_output(int $code, string $message, ?string $requestId = null): string
 {
-    $httpStatus = HttpCode::fromCode($code);
+    $httpStatus = HttpPhrase::fromCode($code);
 
     $response = [
         'success' => false,
@@ -44,6 +46,7 @@ function error_output(int $code, string $message, ?string $requestId = null): st
 
 /**
  * @throws JsonException
+ * @throws UnexpectedValueException
  */
 function show_error(int $code, string $message, ?string $requestId = null): never {
     http_response_code($code);
@@ -62,6 +65,7 @@ function show_error(int $code, string $message, ?string $requestId = null): neve
 
 /**
  * @throws JsonException
+ * @throws UnexpectedValueException
  */
 function error_500(string $message): never
 {
@@ -76,6 +80,7 @@ function error_500(string $message): never
  * @throws JsonException
  * @throws MissingConfigValueException
  * @throws NotFoundExceptionInterface
+ * @throws UnexpectedValueException
  */
 function bootstrap_app(string $runtime): App
 {
@@ -115,6 +120,7 @@ function bootstrap_roadrunner(): PSR7Worker
 
 /**
  * @throws JsonException
+ * @throws UnexpectedValueException
  */
 function run_webapp_fpm(string $appname): void
 {
@@ -145,6 +151,7 @@ function run_webapp_fpm(string $appname): void
  * @throws ContainerExceptionInterface
  * @throws JsonException
  * @throws NotFoundExceptionInterface
+ * @throws UnexpectedValueException
  */
 function run_webapp_rr(string $appname): void
 {

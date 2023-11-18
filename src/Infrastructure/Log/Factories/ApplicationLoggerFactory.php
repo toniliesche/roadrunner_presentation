@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Infrastructure\Log\Factories;
 
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\HtmlFormatter;
 use Monolog\Level;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Psr\Log\LoggerInterface;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Enums\LogType;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Models\Config;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Models\LogConfig;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\ApplicationLoggerInterface;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\ApplicationLogger;
 

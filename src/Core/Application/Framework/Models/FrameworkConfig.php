@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Core\Application\Framework\Models;
 
+use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\ComponentNotConfiguredException;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\MissingConfigValueException;
 
 readonly final class FrameworkConfig
@@ -13,6 +14,8 @@ readonly final class FrameworkConfig
     private LogConfig $logConfig;
 
     private RouterConfig $routerConfig;
+
+    private TemplatingConfig $templatingConfig;
 
     /**
      * @throws MissingConfigValueException
@@ -29,6 +32,10 @@ readonly final class FrameworkConfig
         $this->diConfig = new DIConfig($data['di']);
         $this->logConfig = new LogConfig($data['log'] ?? []);
         $this->routerConfig = new RouterConfig($data['router']);
+
+        if (isset($data['templating'])) {
+            $this->templatingConfig = new TemplatingConfig($data['templating']);
+        }
     }
 
     public function getDiConfig(): DIConfig
@@ -44,5 +51,13 @@ readonly final class FrameworkConfig
     public function getRouterConfig(): RouterConfig
     {
         return $this->routerConfig;
+    }
+
+    /**
+     * @throws ComponentNotConfiguredException
+     */
+    public function getTemplatingConfig(): TemplatingConfig
+    {
+        return $this->templatingConfig ?? throw new ComponentNotConfiguredException('Templating engine has not been configured in framework config section.');
     }
 }

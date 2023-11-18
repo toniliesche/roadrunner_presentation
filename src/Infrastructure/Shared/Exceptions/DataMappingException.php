@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ToniLiesche\Roadrunner\Infrastructure\Http\Exceptions;
+namespace ToniLiesche\Roadrunner\Infrastructure\Shared\Exceptions;
 
 use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\BaseException;
 
-class ItemNotFoundException extends BaseException
+class DataMappingException extends BaseException
 {
 
 }

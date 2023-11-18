@@ -31,10 +31,6 @@ use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
 readonly final class EntityManagerFactory
 {
-    public function __construct(private FileSystemService $fileSystemService)
-    {
-    }
-
     /**
      * @throws ContainerExceptionInterface
      * @throws MissingConfigValueException
@@ -92,6 +88,8 @@ readonly final class EntityManagerFactory
      */
     private function buildConfig(DatabaseConfig $databaseConfig, ContainerInterface $container): Configuration
     {
+        $fileSystemService = $container->get(FileSystemService::class);
+
         $config = ORMSetup::createAttributeMetadataConfiguration(
             $databaseConfig->getEntityPaths(),
             $databaseConfig->isDebugEnabled(),
@@ -111,24 +109,24 @@ readonly final class EntityManagerFactory
 
         $config->setAutoGenerateProxyClasses(AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED);
         $metadataCacheDirectory = new Directory(['basePath' => $databaseConfig->getCachePath(), 'path' => 'metadata']);
-        if (false === $this->fileSystemService->checkDirectoryExists(
+        if (false === $fileSystemService->checkDirectoryExists(
                 $metadataCacheDirectory
-            ) && false === $this->fileSystemService->createDirectory($metadataCacheDirectory, 0755, true)) {
+            ) && false === $fileSystemService->createDirectory($metadataCacheDirectory, 0755, true)) {
             throw new FileSystemException('Could not create database meta data cache directory');
         }
 
         $hydrationCacheDirectory = new Directory(['basePath' => $databaseConfig->getCachePath(), 'path' => 'hydration']
         );
-        if (false === $this->fileSystemService->checkDirectoryExists(
+        if (false === $fileSystemService->checkDirectoryExists(
                 $hydrationCacheDirectory
-            ) && false === $this->fileSystemService->createDirectory($hydrationCacheDirectory, 0755, true)) {
+            ) && false === $fileSystemService->createDirectory($hydrationCacheDirectory, 0755, true)) {
             throw new FileSystemException('Could not create database hydration cache directory');
         }
 
         $queryCacheDirectory = new Directory(['basePath' => $databaseConfig->getCachePath(), 'path' => 'query']);
-        if (false === $this->fileSystemService->checkDirectoryExists(
+        if (false === $fileSystemService->checkDirectoryExists(
                 $queryCacheDirectory
-            ) && false === $this->fileSystemService->createDirectory($queryCacheDirectory, 0755, true)) {
+            ) && false === $fileSystemService->createDirectory($queryCacheDirectory, 0755, true)) {
             throw new FileSystemException('Could not create database query cache directory');
         }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Infrastructure\Database\Users;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -23,6 +24,7 @@ readonly final class UserRepository
 
     /**
      * @throws EntityClassDoesNotExistException
+     * @throws Exception
      */
     public function getUser(int $userId): ?UserEntity
     {

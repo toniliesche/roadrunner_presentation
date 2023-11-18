@@ -6,6 +6,8 @@ namespace ToniLiesche\Roadrunner\Core\Application\Framework\Configuration;
 
 use Slim\App;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\IndexAction;
+use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\LoginFormAction;
+use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\LoginProcessAction;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\PingAction;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\TestPingAction;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Actions\TestPingAsyncAction;
@@ -25,5 +27,8 @@ final readonly class RouteConfigurator implements RouteConfiguratorInterface
         $app->get('/test/user-async', TestUserLoadAsyncAction::class);
         $app->get('/_internal/ping[/]', PingAction::class);
         $app->get('/user[/]', UserLoadAction::class);
+
+        $app->get('/login', LoginFormAction::class);
+        $app->post('/login/process', LoginProcessAction::class);
     }
 }
