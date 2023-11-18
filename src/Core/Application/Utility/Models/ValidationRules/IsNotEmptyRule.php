@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules;
 
 use ToniLiesche\Roadrunner\Core\Application\Utility\Exceptions\ValidationFailedException;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Interfaces\ValidationInterface;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Interfaces\ValidationRuleInterface;
 
-readonly final class IsNotEmptyRule implements ValidationInterface
+readonly final class IsNotEmptyRule implements ValidationRuleInterface
 {
     /** @var string[] */
     private array $fields;

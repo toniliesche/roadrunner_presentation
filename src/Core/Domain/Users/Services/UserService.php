@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Core\Domain\Users\Services;
 
+use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\PasswordVerificationFailedException;
+use ToniLiesche\Roadrunner\Core\Application\Framework\Services\Security\HashService;
+use ToniLiesche\Roadrunner\Core\Domain\Login\Models\LoginPayload;
 use ToniLiesche\Roadrunner\Core\Domain\Shared\Enums\ErrorCode;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Interfaces\UserDataProviderInterface;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Interfaces\UserServiceInterface;
@@ -33,5 +36,23 @@ readonly final class UserService implements UserServiceInterface
         } catch (ItemNotFoundException $ex) {
             throw new NotFoundException('Could not find requested user.', $ex, ErrorCode::E_USER_NOT_FOUND);
         }
+    }
+
+    /**
+     * @throws InternalServerErrorException
+     * @throws NotFoundException
+     * @throws PasswordVerificationFailedException
+     */
+    public function validateLogin(LoginPayload $loginPayload): void
+    {
+        try {
+            $user = $this->userDataProvider->getUserByUsername($loginPayload->getUsername());
+        } catch (DataMappingException|DataProviderException $ex) {
+            throw new InternalServerErrorException('Could not retrieve user from data source.', $ex);
+        } catch (ItemNotFoundException $ex) {
+            throw new NotFoundException('Could not find requested user.', $ex);
+        }
+
+        HashService::validatePassword($loginPayload->getPassword(), $user->getPassword());
     }
 }

@@ -18,9 +18,10 @@ CREATE TABLE `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `username` varchar(20) DEFAULT NULL,
+  `password` varchar(60) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user__uq` (`username`)
 ) ENGINE=InnoDB;
 
-INSERT INTO `user` (`name`, `username`)
-    VALUES ('Toni', 'toni.liesche');
+INSERT INTO `user` (`name`, `username`, `password`)
+    VALUES ('Toni', 'toni.liesche', '$2y$10$W1etzshb1pBsXJD6Aenvi.0ZykO8kL5pOlfCeGmUU39BmGVa58Ki2');

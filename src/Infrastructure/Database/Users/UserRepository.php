@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Infrastructure\Database\Users;
 
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use ToniLiesche\Roadrunner\Infrastructure\Database\Shared\EntityClassDoesNotExistException;
 use ToniLiesche\Roadrunner\Infrastructure\Database\Traits\OrmAwareTrait;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Enums\LogCategory;
@@ -24,26 +21,29 @@ readonly final class UserRepository
 
     /**
      * @throws EntityClassDoesNotExistException
-     * @throws Exception
      */
     public function getUser(int $userId): ?UserEntity
     {
-        Logging::application()?->debug(LogCategory::DATABASE, 'Requesting user from database by id.', ['userId' => $userId]);
+        Logging::application()?->debug(
+            LogCategory::DATABASE,
+            'Requesting user from database by id.',
+            ['userId' => $userId]
+        );
 
-        $repository = $this->getRepository(UserEntity::class);
-//        $queryBuilder = $this->createQueryBuilder('u', UserEntity::class);
-//
-//        $query = $queryBuilder->select('u')
-//            ->where($queryBuilder->expr()->eq('u.id', ':userId'))
-//            ->setParameter('userId', $userId)
-//            ->getQuery();
+        return $this->getRepository(UserEntity::class)->find($userId);
+    }
 
-        try {
-            $user = $repository->find($userId);
-        } catch (NoResultException|NonUniqueResultException) {
-            return null;
-        }
+    /**
+     * @throws EntityClassDoesNotExistException
+     */
+    public function getUserByUsername(string $username): ?UserEntity
+    {
+        Logging::application()?->debug(
+            LogCategory::DATABASE,
+            'Requesting user from database by username.',
+            ['username' => $username]
+        );
 
-        return $user;
+        return $this->getRepository(UserEntity::class)->findOneBy(['username' => $username]);
     }
 }

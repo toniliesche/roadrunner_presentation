@@ -17,4 +17,11 @@ interface UserDataProviderInterface
      * @throws ItemNotFoundException
      */
     public function getUser(int $userId): User;
+
+    /**
+     * @throws DataMappingException
+     * @throws DataProviderException
+     * @throws ItemNotFoundException
+     */
+    public function getUserByUsername(string $username): User;
 }

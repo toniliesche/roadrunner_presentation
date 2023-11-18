@@ -19,26 +19,52 @@ readonly final class UserDataProvider implements UserDataProviderInterface
     {
     }
 
-    /**
-     * @throws DataMappingException
-     * @throws DataProviderException
-     * @throws ItemNotFoundException
-     */
     public function getUser(int $userId): User
     {
         try {
             $userEntity = $this->userRepository->getUser($userId);
         } catch (Exception|EntityClassDoesNotExistException $ex) {
-            throw new DataProviderException('Encountered error while fetching user from database.', $ex->getCode(), $ex);
+            throw new DataProviderException(
+                'Encountered error while fetching user from database.', $ex->getCode(), $ex
+            );
         }
         if (null === $userEntity) {
             throw new ItemNotFoundException(\sprintf('Could not find user with id "%s"', $userId));
         }
 
+        return $this->mapUser($userEntity);
+    }
+
+    public function getUserByUsername(string $username): User
+    {
+        try {
+            $userEntity = $this->userRepository->getUserByUsername($username);
+        } catch (Exception|EntityClassDoesNotExistException $ex) {
+            throw new DataProviderException(
+                'Encountered error while fetching user from database.', $ex->getCode(), $ex
+            );
+        }
+
+        if (null === $userEntity) {
+            throw new ItemNotFoundException(\sprintf('Could not find user with username "%s"', $username));
+        }
+
+        return $this->mapUser($userEntity);
+    }
+
+    /**
+     * @throws DataMappingException
+     */
+    private function mapUser(UserEntity $userEntity): User
+    {
         try {
             return UserMapper::databaseToModel($userEntity);
         } catch (ValidationFailedException $ex) {
-            throw new DataMappingException('Encountered error while mapping user do business object.', $ex->getCode(), $ex);
+            throw new DataMappingException(
+                'Encountered error while mapping user do business object.',
+                $ex->getCode(),
+                $ex
+            );
         }
     }
 }

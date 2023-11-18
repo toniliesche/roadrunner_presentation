@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ToniLiesche\Roadrunner\Core\Domain\Users\Models;
+namespace ToniLiesche\Roadrunner\Core\Domain\Login\Models;
 
 use ToniLiesche\Roadrunner\Core\Application\Utility\Interfaces\ValidationRuleInterface;
 use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\ExistsRule;
@@ -10,13 +10,9 @@ use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsInt
 use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsNotEmptyRule;
 use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsStringRule;
 
-readonly class User
+class LoginPayload
 {
-    private int $id;
-
     private string $username;
-
-    private string $name;
 
     private string $password;
 
@@ -25,24 +21,21 @@ readonly class User
      */
     public static function getValidationRules(): array {
         return [
-            new ExistsRule('id', 'username', 'name', 'password'),
-            new IsNotEmptyRule('username', 'name', 'password'),
-            new IsIntRule('id'),
-            new IsStringRule('username', 'name', 'password'),
+            new ExistsRule('username', 'password'),
+            new IsNotEmptyRule('username', 'password'),
+            new IsStringRule('username', 'password'),
         ];
     }
 
-    public function __construct(array $data)
+    public function __construct(array $data = [])
     {
-        $this->id = $data['id'];
-        $this->username = $data['username'];
-        $this->name = $data['name'];
-        $this->password = $data['password'];
-    }
+        if (isset($data['username'])) {
+            $this->username = $data['username'];
+        }
 
-    public function getId(): int
-    {
-        return $this->id;
+        if (isset($data['password'])) {
+            $this->password = $data['password'];
+        }
     }
 
     public function getUsername(): string
@@ -50,13 +43,18 @@ readonly class User
         return $this->username;
     }
 
-    public function getName(): string
+    public function setUsername(string $username): void
     {
-        return $this->name;
+        $this->username = $username;
     }
 
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
     }
 }

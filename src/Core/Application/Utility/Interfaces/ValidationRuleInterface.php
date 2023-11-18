@@ -6,7 +6,7 @@ namespace ToniLiesche\Roadrunner\Core\Application\Utility\Interfaces;
 
 use ToniLiesche\Roadrunner\Core\Application\Utility\Exceptions\ValidationFailedException;
 
-interface ValidationInterface
+interface ValidationRuleInterface
 {
     /**
      * @throws ValidationFailedException
