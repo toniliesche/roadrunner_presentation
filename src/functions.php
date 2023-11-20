@@ -9,20 +9,20 @@ use Psr\Container\NotFoundExceptionInterface;
 use Slim\App;
 use Spiral\RoadRunner\Http\PSR7Worker;
 use Spiral\RoadRunner\Worker;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Configuration\ContainerConfigurator;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Configuration\MiddlewareConfigurator;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Configuration\RouteConfigurator;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\ContainerBuildFailedException;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\InvalidConfigValueException;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\MissingConfigValueException;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Exceptions\UnexpectedValueException;
+use ToniLiesche\Roadrunner\Core\Application\Config\Exceptions\InvalidConfigValueException;
+use ToniLiesche\Roadrunner\Core\Application\Config\Exceptions\MissingConfigValueException;
+use ToniLiesche\Roadrunner\Core\Application\Config\Factories\ApplicationConfigFactory;
+use ToniLiesche\Roadrunner\Core\Application\Config\Factories\ContainerFactory;
+use ToniLiesche\Roadrunner\Core\Application\Config\Services\ContainerConfigurator;
+use ToniLiesche\Roadrunner\Core\Application\Config\Services\MiddlewareConfigurator;
+use ToniLiesche\Roadrunner\Core\Application\Config\Services\RouteConfigurator;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\AppFactory;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\ApplicationConfigFactory;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\ContainerFactory;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Services\RequestIdService;
+use ToniLiesche\Roadrunner\Core\Application\Library\Exceptions\ContainerBuildFailedException;
+use ToniLiesche\Roadrunner\Core\Application\Library\Exceptions\UnexpectedValueException;
 use ToniLiesche\Roadrunner\Infrastructure\Engine\Services\RoadrunnerRequestCleaningService;
 use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Exceptions\FileSystemException;
-use ToniLiesche\Roadrunner\Infrastructure\Http\Enums\HttpPhrase;
+use ToniLiesche\Roadrunner\Infrastructure\Http\Enums\HttpStatus;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Enums\LogCategory;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
@@ -32,7 +32,7 @@ use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
  */
 function error_output(int $code, string $message, ?string $requestId = null): string
 {
-    $httpStatus = HttpPhrase::fromCode($code);
+    $httpStatus = HttpStatus::fromCode($code);
 
     $response = [
         'success' => false,

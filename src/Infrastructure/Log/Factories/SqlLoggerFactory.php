@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Infrastructure\Log\Factories;
 
-use Monolog\Formatter\LineFormatter;
 use Monolog\Level;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Enums\LogType;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Models\Config;
+use ToniLiesche\Roadrunner\Core\Application\Config\Models\Config;
+use ToniLiesche\Roadrunner\Core\Application\Library\Enums\LogType;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\SqlLogger;
 
 readonly final class SqlLoggerFactory extends AbstractLoggerFactory

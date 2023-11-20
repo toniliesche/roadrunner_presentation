@@ -7,9 +7,9 @@ namespace ToniLiesche\Roadrunner\Core\Application\Framework\Factories;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Interfaces\UuidServiceInterface;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Models\Config;
+use ToniLiesche\Roadrunner\Core\Application\Config\Models\Config;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Services\RequestIdService;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Uuids\Interfaces\UuidGeneratorInterface;
 use ToniLiesche\Roadrunner\Infrastructure\Engine\Services\RoadrunnerRequestCleaningService;
 
 class RequestIdServiceFactory
@@ -24,7 +24,7 @@ class RequestIdServiceFactory
 
         $service = new RequestIdService(
             $config->getApplicationConfig()->getName(),
-            $container->get(UuidServiceInterface::class),
+            $container->get(UuidGeneratorInterface::class),
             \sprintf('HTTP_%s', \strtoupper(\str_replace('-', '_', $config->getSystemConfig()->getReferralHeader())))
         );
         $service->generateRequestId();

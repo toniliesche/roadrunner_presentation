@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Infrastructure\Database\Users;
 
-use ToniLiesche\Roadrunner\Core\Application\Utility\Exceptions\ValidationFailedException;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Traits\DataValidator;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Exceptions\ValidationFailedException;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Traits\DataValidator;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Models\User;
 
 class UserMapper

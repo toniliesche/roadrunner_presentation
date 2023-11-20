@@ -9,7 +9,9 @@ use ToniLiesche\Roadrunner\Core\Domain\Users\Models\User;
 
 interface UserServiceInterface
 {
-    public function getUser(int $userId): User;
+    public function getUser(): User;
+
+    public function fetchUser(int $userId): User;
 
     public function validateLogin(LoginPayload $loginPayload);
 }

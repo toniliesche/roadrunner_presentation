@@ -1,0 +1,5 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+    {{ _global_status.toCode }} {{ _global_status.value }}: {{ _global_error.message }}
+{% endblock %}

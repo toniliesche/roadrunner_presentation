@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ToniLiesche\Roadrunner\Core\Application\Framework\Services;
 
 use Psr\Http\Message\ServerRequestInterface;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Interfaces\UuidServiceInterface;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Uuids\Interfaces\UuidGeneratorInterface;
 use ToniLiesche\Roadrunner\Infrastructure\Engine\Interfaces\RunAfterRequestInterface;
 use ToniLiesche\Roadrunner\Infrastructure\Engine\Interfaces\RunBeforeRequestInterface;
 
@@ -15,7 +15,7 @@ class RequestIdService implements RunBeforeRequestInterface, RunAfterRequestInte
 
     private string $referralId;
 
-    public function __construct(private readonly string $application, private readonly UuidServiceInterface $uuidService, private readonly string $referralIdHeader)
+    public function __construct(private readonly string $application, private readonly UuidGeneratorInterface $uuidService, private readonly string $referralIdHeader)
     {
     }
 

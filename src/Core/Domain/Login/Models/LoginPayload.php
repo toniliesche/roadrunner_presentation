@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Core\Domain\Login\Models;
 
-use ToniLiesche\Roadrunner\Core\Application\Utility\Interfaces\ValidationRuleInterface;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\ExistsRule;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsIntRule;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsNotEmptyRule;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsStringRule;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Interfaces\ValidationRuleInterface;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Models\ExistsRule;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Models\IsNotEmptyRule;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Models\IsStringRule;
 
 class LoginPayload
 {

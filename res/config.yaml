@@ -34,8 +34,8 @@ framework:
     cache: false
   templating:
     baseVars:
-      base_page_title: Roadrunner
-      base_copyright_year: "2023"
+      page_title: Roadrunner
+      copyright_year: "2023"
     cachePath: /var/www/webapp/tmp/cache/twig
     cache: false
     templatePath: /var/www/webapp/templates

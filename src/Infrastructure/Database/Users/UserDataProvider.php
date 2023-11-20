@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ToniLiesche\Roadrunner\Infrastructure\Database\Users;
 
 use Doctrine\DBAL\Exception;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Exceptions\ValidationFailedException;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Exceptions\ValidationFailedException;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Interfaces\UserDataProviderInterface;
 use ToniLiesche\Roadrunner\Core\Domain\Users\Models\User;
 use ToniLiesche\Roadrunner\Infrastructure\Database\Shared\EntityClassDoesNotExistException;
@@ -19,10 +19,10 @@ readonly final class UserDataProvider implements UserDataProviderInterface
     {
     }
 
-    public function getUser(int $userId): User
+    public function fetchUser(int $userId): User
     {
         try {
-            $userEntity = $this->userRepository->getUser($userId);
+            $userEntity = $this->userRepository->fetchUser($userId);
         } catch (Exception|EntityClassDoesNotExistException $ex) {
             throw new DataProviderException(
                 'Encountered error while fetching user from database.', $ex->getCode(), $ex
@@ -35,10 +35,10 @@ readonly final class UserDataProvider implements UserDataProviderInterface
         return $this->mapUser($userEntity);
     }
 
-    public function getUserByUsername(string $username): User
+    public function fetchUserByUsername(string $username): User
     {
         try {
-            $userEntity = $this->userRepository->getUserByUsername($username);
+            $userEntity = $this->userRepository->fetchUserByUsername($username);
         } catch (Exception|EntityClassDoesNotExistException $ex) {
             throw new DataProviderException(
                 'Encountered error while fetching user from database.', $ex->getCode(), $ex

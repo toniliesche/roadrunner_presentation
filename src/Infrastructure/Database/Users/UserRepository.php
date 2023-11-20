@@ -22,7 +22,7 @@ readonly final class UserRepository
     /**
      * @throws EntityClassDoesNotExistException
      */
-    public function getUser(int $userId): ?UserEntity
+    public function fetchUser(int $userId): ?UserEntity
     {
         Logging::application()?->debug(
             LogCategory::DATABASE,
@@ -36,7 +36,7 @@ readonly final class UserRepository
     /**
      * @throws EntityClassDoesNotExistException
      */
-    public function getUserByUsername(string $username): ?UserEntity
+    public function fetchUserByUsername(string $username): ?UserEntity
     {
         Logging::application()?->debug(
             LogCategory::DATABASE,

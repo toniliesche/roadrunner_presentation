@@ -1,12 +1,9 @@
-<html>
-<head>
-    <title>{{ base_page_title }} : Login</title>
-</head>
-<body>
+{% extends 'layout.twig' %}
+
+{% block body %}
 <form method="post" action="/login/process">
     <input id="username" name="username" type="text"/>
     <input id="password" name="password" type="password"/>
     <input id="submit" value="submit" type="submit"/>
 </form>
-</body>
-</html>
+{% endblock %}

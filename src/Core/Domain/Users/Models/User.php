@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Core\Domain\Users\Models;
 
-use ToniLiesche\Roadrunner\Core\Application\Utility\Interfaces\ValidationRuleInterface;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\ExistsRule;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsIntRule;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsNotEmptyRule;
-use ToniLiesche\Roadrunner\Core\Application\Utility\Models\ValidationRules\IsStringRule;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Interfaces\ValidationRuleInterface;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Models\ExistsRule;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Models\IsBoolRule;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Models\IsIntRule;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Models\IsNotEmptyRule;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Validation\Models\IsStringRule;
 
 readonly class User
 {
@@ -20,6 +21,8 @@ readonly class User
 
     private string $password;
 
+    private bool $loggedIn;
+
     /**
      * @return ValidationRuleInterface[]
      */
@@ -28,6 +31,7 @@ readonly class User
             new ExistsRule('id', 'username', 'name', 'password'),
             new IsNotEmptyRule('username', 'name', 'password'),
             new IsIntRule('id'),
+            new IsBoolRule('loggedIn'),
             new IsStringRule('username', 'name', 'password'),
         ];
     }
@@ -38,6 +42,7 @@ readonly class User
         $this->username = $data['username'];
         $this->name = $data['name'];
         $this->password = $data['password'];
+        $this->loggedIn = $data['loggedIn'] ?? false;
     }
 
     public function getId(): int
@@ -58,5 +63,10 @@ readonly class User
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function isLoggedIn(): bool
+    {
+        return $this->loggedIn;
     }
 }

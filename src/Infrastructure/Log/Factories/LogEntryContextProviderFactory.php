@@ -7,7 +7,7 @@ namespace ToniLiesche\Roadrunner\Infrastructure\Log\Factories;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Models\Config;
+use ToniLiesche\Roadrunner\Core\Application\Config\Models\Config;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Services\RequestIdService;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\LogEntryContextProvider;
 

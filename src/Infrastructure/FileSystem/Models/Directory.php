@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ToniLiesche\Roadrunner\Infrastructure\FileSystem\Models;
 
-use ToniLiesche\Roadrunner\Core\Application\Framework\Services\Helpers\StringHelper;
+use ToniLiesche\Roadrunner\Core\Application\Utility\Helpers\Services\StringHelper;
 use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Interfaces\DirectoryInterface;
 
 class Directory implements DirectoryInterface

@@ -7,11 +7,12 @@ namespace ToniLiesche\Roadrunner\Core\Application\Framework\Services;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Interfaces\ErrorResponseRendererInterface;
+use ToniLiesche\Roadrunner\Core\Application\View\Interfaces\ErrorResponseRendererInterface;
+use ToniLiesche\Roadrunner\Infrastructure\Http\Exceptions\HttpException;
 
 readonly class ErrorHandler
 {
-    public function __construct(private ErrorResponseRendererInterface $renderer)
+    public function __construct(private ErrorResponseRendererInterface $apiErrorRenderer, private ?ErrorResponseRendererInterface $templateErrorRenderer = null)
     {
     }
 
@@ -27,6 +28,16 @@ readonly class ErrorHandler
             $logger->error('Uncaught exeption:');
         }
 
-        return $this->renderer->renderError($request, $t);
+        if ($t instanceof HttpException) {
+            if ($t->getApiResult()) {
+                $renderer = $this->apiErrorRenderer;
+            } else {
+                $renderer = $this->templateErrorRenderer ?? $this->apiErrorRenderer;
+            }
+        } else {
+            $renderer = $this->apiErrorRenderer;
+        }
+
+        return $renderer->renderError($request, $t);
     }
 }

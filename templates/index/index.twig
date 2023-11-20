@@ -1,0 +1,9 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+{% if _global_user.isLoggedIn %}
+    Hello, {{ _global_user.username }}!
+{% else %}
+    Hello, guest! <a href="/login">Go to Login</a>
+{% endif %}
+{% endblock %}
