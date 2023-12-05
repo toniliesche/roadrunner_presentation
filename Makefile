@@ -54,16 +54,20 @@ down:
 stop:
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh stop
 
-up:
+pre-up:
+	sudo mkdir -p tmp/{cache,log,log,proxies}
+	sudo chown -R 82:82 tmp/*
+
+up: pre-up
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh up -d --remove-orphans
 
-up-dev: configure-rr-live
+up-dev: configure-rr-live pre-up
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.dev.yml -p phpughh up -d --remove-orphans
 
-up-rr: configure-rr-live
+up-rr: configure-rr-live pre-up
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.rr.yml -p phpughh up -d --remove-orphans
 
-up-rr-dev: configure-rr-dev
+up-rr-dev: configure-rr-dev pre-up
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.rr.dev.yml -p phpughh up -d --remove-orphans
 
 init-db:

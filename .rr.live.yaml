@@ -13,7 +13,7 @@ http:
   fcgi:
     address: tcp://0.0.0.0:9000
   pool:
-    num_workers: 2
+    num_workers: 4
     max_jobs: 1000
     allocate_timeout: 30s
     reset_timeout: 30s
