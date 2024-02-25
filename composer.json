@@ -14,17 +14,21 @@
   "require": {
     "php": "^8.2",
     "ext-ctype": "*",
+    "ext-session": "*",
     "ext-yaml": "*",
     "bryanjhv/slim-session": "^4.1",
     "doctrine/common": "^3.4",
-    "doctrine/dbal": "^3.7",
+    "doctrine/dbal": "^4.0",
     "doctrine/event-manager": "^2.0",
-    "doctrine/orm": "^2.16",
+    "doctrine/orm": "^3.0",
     "guzzlehttp/guzzle": "^7.8",
     "guzzlehttp/promises": "^2.0",
     "guzzlehttp/psr7": "^2.6",
     "monolog/monolog": "^3.5",
     "nyholm/psr7": "^1.8",
+    "open-telemetry/sdk": "^1.0",
+    "open-telemetry/opentelemetry-auto-slim": "^1.0",
+    "open-telemetry/opentelemetry-logger-monolog": "^1.0",
     "php-di/php-di": "^7.0",
     "php-di/slim-bridge": "^3.4",
     "psr/container": "^2.0",
@@ -38,19 +42,24 @@
     "slim/slim": "^4.12",
     "slim/twig-view": "^3.3",
     "spiral/roadrunner": "^2023.3",
-    "spiral/roadrunner-http": "^3.2",
-    "spiral/roadrunner-worker": "^3.2",
-    "symfony/cache": "^6.3",
-    "symfony/stopwatch": "^6.3",
-    "twig/twig": "^3.7"
+    "spiral/roadrunner-http": "^3.4",
+    "spiral/roadrunner-worker": "^3.3",
+    "symfony/cache": "^7.0",
+    "symfony/stopwatch": "^7.0",
+    "twig/twig": "^3.8"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "maglnet/composer-require-checker": "^4.7"
+    "maglnet/composer-require-checker": "^4.8"
   },
   "autoload": {
     "psr-4": {
       "ToniLiesche\\Roadrunner\\": "src/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": false
     }
   }
 }

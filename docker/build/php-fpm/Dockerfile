@@ -17,8 +17,10 @@ gettext-dev \
   pecl bundle apcu && \
   pecl bundle igbinary && \
   pecl bundle memcached && \
-  pecl bundle msgpack && \
   pecl bundle mongodb && \
+  pecl bundle msgpack && \
+  pecl bundle opentelemetry && \
+  pecl bundle protobuf && \
   pecl bundle redis && \
   pecl bundle yaml && \
   docker-php-ext-install \
@@ -39,6 +41,8 @@ gettext-dev \
   /usr/src/packages/memcached \
   /usr/src/packages/mongodb \
   /usr/src/packages/msgpack \
+  /usr/src/packages/opentelemetry \
+  /usr/src/packages/protobuf \
   /usr/src/packages/redis \
   /usr/src/packages/yaml && \
   rm -Rf /usr/src/packages/* && \

@@ -5,15 +5,25 @@ rpc:
 server:
   command: "php bin/roadrunner.php -dopcache.jit=tracing -dopcache.jit_buffer_size=100M"
   user: "www-data"
+  env:
+    - XDEBUG_SESSION: 1
+    - PHP_IDE_CONFIG: serverName=localhost
+    - OTEL_SERVICE_NAME: php
+    - OTEL_TRACES_EXPORTER: otlp
+    - OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+    - OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+    - OTEL_PHP_TRACES_PROCESSOR: simple
+  relay: pipes
 logs:
   mode: production
-  level: info
-  encoding: json
+  level: debug
+  encoding: console
 http:
   fcgi:
     address: tcp://0.0.0.0:9000
   pool:
-    num_workers: 4
+    debug: true
+    num_workers: 1
     max_jobs: 1000
     allocate_timeout: 30s
     reset_timeout: 30s
@@ -24,3 +34,12 @@ http:
       idle_ttl: 120s
       max_worker_memory: 1024
       exec_ttl: 60s
+  middleware: [gzip, otel]
+  otel:
+    insecure: true
+    compress: false
+    client: http
+    exporter: otlp
+    service_name: rr-dev
+    service_version: 1.0.0
+    endpoint: otel-collector:4318

@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-build-docker: build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli
+build-docker: build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin
 
 build-dev-cli: build-php-fpm
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain dev-cli
@@ -9,6 +9,9 @@ build-mariadb:
 
 build-nginx:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain nginx
+
+build-otel-collector:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain otel-collector
 
 build-php-fpm:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain php
@@ -21,6 +24,9 @@ build-php-rr: build-php-fpm
 
 build-php-rr-dev: build-php-rr
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain roadrunner-dev
+
+build-zipkin:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain zipkin
 
 get-bash:
 	source docker/.env && docker run --rm -it -v .:/var/www/webapp -w /var/www/webapp phpughh/roadrunner/php:$${PHP_VERSION}-cli bash
