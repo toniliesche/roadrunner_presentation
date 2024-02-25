@@ -27,3 +27,18 @@ services:
       - ../:/var/www/webapp
     ports:
       - "8080:80"
+  otel:
+    container_name: otel-collector
+    hostname: otel-collector
+    command: ["--config=/etc/otel-collector-config.yml"]
+    image: phpughh/roadrunner/otel-collector:${OTEL_COLLECTOR_VERSION}
+    volumes:
+      - ./res/otel-collector-config.yml:/etc/otel-collector-config.yml
+    ports:
+      - "4318:4318"
+  zipkin:
+    container_name: zipkin
+    hostname: zipkin
+    image: phpughh/roadrunner/zipkin:${ZIPKIN_VERSION}
+    ports:
+      - "9411:9411"
