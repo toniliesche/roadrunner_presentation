@@ -24,4 +24,4 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB;
 
 INSERT INTO `user` (`name`, `username`, `password`)
-    VALUES ('Admin', 'admin', '$2y$10$uiJFVpx0F26GNeoVgyTeyezSovUoq1lMAzZdfROexKaHU8OnaUlbq');
+    VALUES ('Admin', 'admin', '$2a$10$4HsGhuUqKM6n1iKsdC0WNO8JgRrBh07XDRN0wz8BKHMZ1v58XMF7a');

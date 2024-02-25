@@ -59,6 +59,13 @@ services:
         php_version: ${PHP_VERSION}
     image: phpughh/roadrunner/php:${PHP_VERSION}-rr-dev
 
+  traefik:
+    build:
+      context: build/traefik
+      args:
+        traefik_version: ${TRAEFIK_VERSION}
+    image: phpughh/roadrunner/traefik:${TRAEFIK_VERSION}
+
   zipkin:
     build:
       context: build/zipkin

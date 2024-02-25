@@ -9,13 +9,22 @@ server:
     - OTEL_SERVICE_NAME: php
     - OTEL_TRACES_EXPORTER: otlp
     - OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
-    - OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+    - OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector.phpug.hh
     - OTEL_PHP_TRACES_PROCESSOR: simple
   relay: pipes
 logs:
   mode: production
   level: info
   encoding: json
+otel:
+  resource:
+    service_name: roadrunner-demo
+    service_version: 1.0.0
+  insecure: true
+  compress: false
+  client: http
+  exporter: otlp
+  endpoint: otel-collector:4318
 http:
   fcgi:
     address: tcp://0.0.0.0:9000
@@ -32,11 +41,3 @@ http:
       max_worker_memory: 1024
       exec_ttl: 60s
   middleware: [gzip, otel]
-  otel:
-    insecure: true
-    compress: false
-    client: http
-    exporter: otlp
-    service_name: rr-live
-    service_version: 1.0.0
-    endpoint: otel-collector:4318

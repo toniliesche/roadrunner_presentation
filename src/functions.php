@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
+use OpenTelemetry\SDK\Trace\TracerProviderFactory;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Slim\App;
@@ -97,7 +98,7 @@ function bootstrap_app(string $runtime): App
 
     $containerFactory = new ContainerFactory();
     $container = $containerFactory->createContainer($config, new ContainerConfigurator());
-    
+
     Logging::init($container);
     Logging::application()?->debug(LogCategory::FRAMEWORK, 'Container created. Start application bootstrap.');
 
@@ -176,6 +177,7 @@ function run_webapp_rr(string $appname): void
     $psr7worker = bootstrap_roadrunner();
     while (true) {
         try {
+            Logging::application()?->debug(LogCategory::FRAMEWORK, 'Waiting for new request.');
             $request = $psr7worker->waitRequest();
 
             if (null === $request) {
@@ -184,10 +186,12 @@ function run_webapp_rr(string $appname): void
             }
 
             Logging::application()?->debug(LogCategory::FRAMEWORK, 'Got new request.');
+
         } catch (Throwable $t) {
             Logging::application()?->error(LogCategory::FRAMEWORK, 'Failed initializing request.', ['error' => $t->getMessage()]);
             $psr7worker->respond(new Response(500, [], error_output(500, 'something went wrong')));
             $roadrunnerRequestCleaningService->processAfterRequest();
+
             continue;
         }
 
@@ -197,6 +201,7 @@ function run_webapp_rr(string $appname): void
             $roadrunnerRequestCleaningService->processBeforeRequest();
         } catch (Throwable $t) {
             Logging::application()?->error(LogCategory::FRAMEWORK, 'Failed running pre-request tasks.', ['error' => $t->getMessage()]);
+
             continue;
         }
 
@@ -213,4 +218,5 @@ function run_webapp_rr(string $appname): void
             $roadrunnerRequestCleaningService->processAfterRequest();
         }
     }
+
 }

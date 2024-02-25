@@ -7,12 +7,12 @@ namespace ToniLiesche\Roadrunner\Core\Application\Config\Services;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use OpenTelemetry\API\Trace\TracerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Views\Twig;
 use ToniLiesche\Roadrunner\Core\Application\Config\Interfaces\ContainerConfiguratorInterface;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\ErrorHandlerFactory;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\RequestIdServiceFactory;
-use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\TwigResponseRendererFactory;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Services\ErrorHandler;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Services\RequestIdService;
 use ToniLiesche\Roadrunner\Core\Application\Utility\Uuids\Interfaces\UuidGeneratorInterface;
@@ -54,6 +54,8 @@ use ToniLiesche\Roadrunner\Infrastructure\Log\Services\ApplicationLogger;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\AuditLogger;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\LogEntryContextProvider;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\SqlLogger;
+
+use ToniLiesche\Roadrunner\Infrastructure\Tracing\Factories\TracerFactory;
 
 use function DI\autowire;
 use function DI\create;
@@ -117,6 +119,9 @@ final readonly class ContainerConfigurator implements ContainerConfiguratorInter
 
             TestPingAction::class => autowire(),
             TestPingAsyncAction::class => autowire(),
+
+            TracerFactory::class => autowire(),
+            TracerInterface::class => factory(TracerFactory::class),
 
             Twig::class => factory(TwigFactory::class),
             TwigResponseRenderer::class => autowire(),

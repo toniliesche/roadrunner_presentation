@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-build-docker: build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin
+build-docker: build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik
 
 build-dev-cli: build-php-fpm
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain dev-cli
@@ -24,6 +24,9 @@ build-php-rr: build-php-fpm
 
 build-php-rr-dev: build-php-rr
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain roadrunner-dev
+
+build-traefik:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain traefik
 
 build-zipkin:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain zipkin
@@ -67,7 +70,7 @@ pre-up:
 up: pre-up
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh up -d --remove-orphans
 
-up-dev: configure-rr-live pre-up
+up-dev: pre-up
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.dev.yml -p phpughh up -d --remove-orphans
 
 up-rr: configure-rr-live pre-up

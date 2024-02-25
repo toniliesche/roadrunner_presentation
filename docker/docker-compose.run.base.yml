@@ -1,3 +1,8 @@
+networks:
+  default:
+    name: phpughh
+    external: true
+
 services:
   dev-cli:
     container_name: dev-cli
@@ -9,6 +14,9 @@ services:
     working_dir: /var/www
     volumes:
       - ../../:/var/www
+    networks:
+      - default
+
   mariadb:
     container_name: mariadb
     hostname: mariadb
@@ -16,7 +24,14 @@ services:
     environment:
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
     ports:
-      - "3306:3306"
+      - target: 3306
+        host_ip: 0.0.0.0
+        published: "3306"
+        protocol: tcp
+        mode: host
+    networks:
+      - default
+
   nginx:
     depends_on:
       - php
@@ -25,20 +40,106 @@ services:
     image: phpughh/roadrunner/nginx:${NGINX_VERSION}
     volumes:
       - ../:/var/www/webapp
-    ports:
-      - "8080:80"
+#    ports:
+#      - target: 80
+#        host_ip: 0.0.0.0
+#        published: "80"
+#        protocol: tcp
+#        mode: host
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.nginx-svc.loadbalancer.server.port=80"
+      - "traefik.http.routers.nginx.entrypoints=http"
+      - "traefik.http.routers.nginx.rule=HostRegexp(`{subdomain:.+}.phpug.hh`,`localhost`)"
+      - "traefik.http.routers.nginx.priority=1"
+      - "traefik.http.routers.nginx.service=nginx-svc"
+
   otel:
     container_name: otel-collector
     hostname: otel-collector
-    command: ["--config=/etc/otel-collector-config.yml"]
+    command: [ "--config=/etc/otel-collector-config.yml" ]
     image: phpughh/roadrunner/otel-collector:${OTEL_COLLECTOR_VERSION}
     volumes:
       - ./res/otel-collector-config.yml:/etc/otel-collector-config.yml
+#    ports:
+#      - target: 4318
+#        host_ip: 0.0.0.0
+#        published: "4318"
+#        protocol: tcp
+#        mode: host
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.otel-svc.loadbalancer.server.port=4318"
+      - "traefik.http.routers.otel.entrypoints=http"
+      - "traefik.http.routers.otel.rule=Host(`otel-collector.phpug.hh`)"
+      - "traefik.http.routers.otel.priority=2"
+      - "traefik.http.routers.otel.service=otel-svc"
+
+  traefik:
+    container_name: traefik
+    hostname: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.http.address=:80"
+      - "--accesslog=true"
+      - "--accesslog.filePath=/dev/stdout"
+    image: phpughh/roadrunner/traefik:${TRAEFIK_VERSION}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     ports:
-      - "4318:4318"
+      - target: 80
+        host_ip: 0.0.0.0
+        published: "80"
+        protocol: tcp
+        mode: host
+      - target: 443
+        host_ip: 0.0.0.0
+        published: "443"
+        protocol: tcp
+        mode: host
+    networks:
+      default:
+        aliases:
+          - otel-collector.phpug.hh
+          - traefik.phpug.hh
+          - www.phpug.hh
+          - zipkin.phpug.hh
+    privileged: true
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.api-svc.loadbalancer.server.port=9999"
+
+      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.phpug.hh`)"
+      - "traefik.http.routers.traefik.priority=2"
+      - "traefik.http.routers.traefik.service=api@internal"
+
   zipkin:
     container_name: zipkin
     hostname: zipkin
     image: phpughh/roadrunner/zipkin:${ZIPKIN_VERSION}
-    ports:
-      - "9411:9411"
+#    ports:
+#      - target: 9411
+#        host_ip: 0.0.0.0
+#        published: "9411"
+#        protocol: tcp
+#        mode: host
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.zipkin-svc.loadbalancer.server.port=9411"
+      - "traefik.http.routers.zipkin.entrypoints=http"
+      - "traefik.http.routers.zipkin.rule=Host(`zipkin.phpug.hh`)"
+      - "traefik.http.routers.zipkin.priority=2"
+      - "traefik.http.routers.zipkin.service=zipkin-svc"
