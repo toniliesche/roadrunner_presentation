@@ -1,26 +1,49 @@
 networks:
   default:
     name: phpughh
-    external: true
+
+volumes:
+  grafana_data:
+  mariadb_backup:
+  mariadb_data:
 
 services:
   dev-cli:
     container_name: dev-cli
     hostname: dev-cli
     image: phpughh/roadrunner/php:${PHP_VERSION}-cli
+    volumes:
+      - ../../:/var/www
     privileged: true
     tty: true
     stdin_open: true
     working_dir: /var/www
-    volumes:
-      - ../../:/var/www
     networks:
       - default
+
+  grafana:
+    container_name: grafana
+    hostname: grafana
+    image: phpughh/roadrunner/grafana:${GRAFANA_VERSION}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.grafana-svc.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.entrypoints=http"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.phpug.hh`)"
+      - "traefik.http.routers.grafana.priority=2"
+      - "traefik.http.routers.grafana.service=grafana-svc"
 
   mariadb:
     container_name: mariadb
     hostname: mariadb
     image: phpughh/roadrunner/mariadb:${MARIADB_VERSION}
+    volumes:
+      - mariadb_backup:/backup
     environment:
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
     ports:
@@ -40,12 +63,6 @@ services:
     image: phpughh/roadrunner/nginx:${NGINX_VERSION}
     volumes:
       - ../:/var/www/webapp
-#    ports:
-#      - target: 80
-#        host_ip: 0.0.0.0
-#        published: "80"
-#        protocol: tcp
-#        mode: host
     networks:
       - default
     labels:
@@ -64,12 +81,6 @@ services:
     image: phpughh/roadrunner/otel-collector:${OTEL_COLLECTOR_VERSION}
     volumes:
       - ./res/otel-collector-config.yml:/etc/otel-collector-config.yml
-#    ports:
-#      - target: 4318
-#        host_ip: 0.0.0.0
-#        published: "4318"
-#        protocol: tcp
-#        mode: host
     networks:
       - default
     labels:
@@ -127,12 +138,11 @@ services:
     container_name: zipkin
     hostname: zipkin
     image: phpughh/roadrunner/zipkin:${ZIPKIN_VERSION}
-#    ports:
-#      - target: 9411
-#        host_ip: 0.0.0.0
-#        published: "9411"
-#        protocol: tcp
-#        mode: host
+    environment:
+      - STORAGE_TYPE=mysql
+      - MYSQL_HOST=mariadb
+      - MYSQL_USER=zipkin
+      - MYSQL_PASS=zipkin
     networks:
       - default
     labels:

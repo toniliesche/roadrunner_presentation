@@ -42,6 +42,26 @@ readonly final class LogEntryContextProvider
             'referralId' => $this->requestIdService->getReferralId(),
         ];
 
+
+        foreach (['application', 'category', 'host', 'stage'] as $key) {
+            if (!isset($context[$key])) {
+                continue;
+            }
+
+            $i = 1;
+            while (true) {
+                $newKey = \sprintf('%s_%d', $key, $i);
+                if (isset($context[$newKey])) {
+                    $i++;
+                    continue;
+                }
+
+                $context[$newKey] = $context[$key];
+                break;
+            }
+            unset($context[$key]);
+        }
+
         return $data + $context;
     }
 

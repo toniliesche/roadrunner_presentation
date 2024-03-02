@@ -1,3 +1,3 @@
-ARG zipkin_version
-FROM openzipkin/zipkin:${zipkin_version}
+ARG grafana_version
+FROM grafana/grafana:${grafana_version}
 LABEL org.opencontainers.image.authors="docker@toniliesche.de"

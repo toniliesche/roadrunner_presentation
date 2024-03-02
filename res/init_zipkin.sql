@@ -1,0 +1,7 @@
+DROP DATABASE IF EXISTS zipkin;
+
+DROP USER IF EXISTS 'zipkin'@'%';
+
+CREATE DATABASE zipkin;
+
+USE zipkin;

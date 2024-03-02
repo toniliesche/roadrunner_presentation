@@ -9,6 +9,13 @@ services:
         php_version: ${PHP_VERSION}
     image: phpughh/roadrunner/php:${PHP_VERSION}-cli
 
+  grafana:
+    build:
+      context: build/grafana
+      args:
+        grafana_version: ${GRAFANA_VERSION}
+    image: phpughh/roadrunner/grafana:${GRAFANA_VERSION}
+
   mariadb:
     build:
       context: build/mariadb

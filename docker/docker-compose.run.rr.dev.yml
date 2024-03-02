@@ -1,5 +1,6 @@
 include:
   - docker-compose.run.base.yml
+
 services:
   php:
     depends_on:
@@ -13,3 +14,11 @@ services:
       - XDEBUG_CONNECT_ALWAYS=${PHP_XDEBUG_CONNECT_ALWAYS}
     volumes:
       - ../:/var/www/webapp
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.rr-svc.loadbalancer.server.port=2112"
+      - "traefik.http.routers.rr.entrypoints=http"
+      - "traefik.http.routers.rr.rule=HostRegexp(`metrics.phpug.hh`)"
+      - "traefik.http.routers.rr.priority=2"
+      - "traefik.http.routers.rr.service=rr-svc"

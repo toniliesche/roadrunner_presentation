@@ -1,8 +1,11 @@
 SHELL := /bin/bash
-build-docker: build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik
+build-docker: build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik build-grafana
 
 build-dev-cli: build-php-fpm
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain dev-cli
+
+build-grafana:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain grafana
 
 build-mariadb:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain mariadb
@@ -43,16 +46,16 @@ clean:
 	if [ -d tmp/proxies ]; then sudo rm -rf tmp/proxies/*; fi
 
 logs:
-	tail -n 100 -f tmp/log/*.log
+	tail -n 100 -f tmp/log/roadrunner*.log
 
 audit-logs:
-	tail -n 100 -f tmp/log/*audit.log
+	tail -n 100 -f tmp/log/roadrunner_audit.log
 
 app-logs:
-	tail -n 100 -f tmp/log/*app.log
+	tail -n 100 -f tmp/log/roadrunner.log
 
 sql-logs:
-	tail -n 100 -f tmp/log/*sql.log
+	tail -n 100 -f tmp/log/roadrunner_sql.log
 
 nginx-logs:
 	docker logs --tail 100 -f nginx
@@ -81,6 +84,10 @@ up-rr-dev: configure-rr-dev pre-up
 
 init-db:
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli sh -c "mysql < roadrunner/res/init.sql"
+	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli sh -c "wget https://github.com/openzipkin/zipkin/raw/master/zipkin-storage/mysql-v1/src/main/resources/mysql.sql -O roadrunner/res/zipkin.sql"
+	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli sh -c "mysql < roadrunner/res/init_zipkin.sql"
+	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli sh -c "mysql zipkin < roadrunner/res/zipkin.sql"
+	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli sh -c "mysql < roadrunner/res/init_zipkin_part2.sql"
 
 mysql:
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli mysql

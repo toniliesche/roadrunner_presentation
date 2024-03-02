@@ -2,12 +2,14 @@
 version: "3"
 rpc:
   listen: tcp://127.0.0.1:6001
+metrics:
+  address: 0.0.0.0:2112
 server:
   command: "php bin/roadrunner.php -dopcache.jit=tracing -dopcache.jit_buffer_size=100M"
   user: "www-data"
   env:
     - XDEBUG_SESSION: 1
-    - PHP_IDE_CONFIG: serverName=localhost
+    - PHP_IDE_CONFIG: serverName=www.phpug.hh
     - OTEL_SERVICE_NAME: php
     - OTEL_TRACES_EXPORTER: otlp
     - OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
