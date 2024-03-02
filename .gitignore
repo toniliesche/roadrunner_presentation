@@ -1,4 +1,6 @@
 .idea
+.pid
+.rr.yaml
 composer.lock
 log
 tmp
