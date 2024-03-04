@@ -24,6 +24,18 @@ services:
         - phpughh/roadrunner/grafana:latest
     image: phpughh/roadrunner/grafana:${GRAFANA_VERSION}
 
+  graylog:
+    build:
+      context: build/graylog
+      args:
+        graylog_version: ${GRAYLOG_VERSION}
+      tags:
+        - phpughh/roadrunner/graylog:${GRAYLOG_VERSION_MAJOR}.${GRAYLOG_VERSION_MINOR}.${GRAYLOG_VERSION_BUGFIX}
+        - phpughh/roadrunner/graylog:${GRAYLOG_VERSION_MAJOR}.${GRAYLOG_VERSION_MINOR}
+        - phpughh/roadrunner/graylog:${GRAYLOG_VERSION_MAJOR}
+        - phpughh/roadrunner/graylog:latest
+    image: phpughh/roadrunner/graylog:${GRAYLOG_VERSION}
+
   mariadb:
     build:
       context: build/mariadb
@@ -34,6 +46,17 @@ services:
         - phpughh/roadrunner/mariadb:${MARIADB_VERSION_MAJOR}
         - phpughh/roadrunner/mariadb:latest
     image: phpughh/roadrunner/mariadb:${MARIADB_VERSION}
+
+  mongo:
+    build:
+      context: build/mongo
+      args:
+        mongo_version: ${MONGO_VERSION}
+      tags:
+        - phpughh/roadrunner/mongo:${MONGO_VERSION_MAJOR}.${MONGO_VERSION_MINOR}
+        - phpughh/roadrunner/mongo:${MONGO_VERSION_MAJOR}
+        - phpughh/roadrunner/mongo:latest
+    image: phpughh/roadrunner/mongo:${MONGO_VERSION}
 
   nginx-base:
     build:
@@ -56,6 +79,18 @@ services:
         - phpughh/roadrunner/nginx:${NGINX_VERSION_MAJOR}
         - phpughh/roadrunner/nginx:latest
     image: phpughh/roadrunner/nginx:${NGINX_VERSION}
+
+  opensearch:
+    build:
+      context: build/opensearch
+      args:
+        opensearch_version: ${OPENSEARCH_VERSION}
+      tags:
+        - phpughh/roadrunner/opensearch:${OPENSEARCH_VERSION_MAJOR}.${OPENSEARCH_VERSION_MINOR}.${OPENSEARCH_VERSION_BUGFIX}
+        - phpughh/roadrunner/opensearch:${OPENSEARCH_VERSION_MAJOR}.${OPENSEARCH_VERSION_MINOR}
+        - phpughh/roadrunner/opensearch:${OPENSEARCH_VERSION_MAJOR}
+        - phpughh/roadrunner/opensearch:latest
+    image: phpughh/roadrunner/opensearch:${OPENSEARCH_VERSION}
 
   otel-collector:
     build:

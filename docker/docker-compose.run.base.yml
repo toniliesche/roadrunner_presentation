@@ -6,6 +6,8 @@ volumes:
   grafana_data:
   mariadb_backup:
   mariadb_data:
+  mongo_data:
+  opensearch_data:
   portainer_data:
   prometheus_data:
 
@@ -40,6 +42,29 @@ services:
       - "traefik.http.routers.grafana.priority=2"
       - "traefik.http.routers.grafana.service=grafana-svc"
 
+  graylog:
+    container_name: graylog
+    hostname: graylog
+    image: phpughh/roadrunner/graylog:${GRAYLOG_VERSION}
+    networks:
+      - default
+    environment:
+      - GRAYLOG_ELASTICSEARCH_HOSTS=http://admin:${OPENSEARCH_ADMIN_PASSWORD}@opensearch:9200
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://graylog.phpug.hh/
+      - GRAYLOG_MONGODB_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/graylog
+      - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET}
+      - GRAYLOG_ROOT_USER=${GRAYLOG_ROOT_USER}
+      - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2}
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.graylog-svc.loadbalancer.server.port=9000"
+      - "traefik.http.routers.graylog.entrypoints=http"
+      - "traefik.http.routers.graylog.rule=Host(`graylog.phpug.hh`)"
+      - "traefik.http.routers.graylog.priority=2"
+      - "traefik.http.routers.graylog.service=graylog-svc"
+    entrypoint: /usr/bin/tini -- wait-for-it opensearch:9200 --  /docker-entrypoint.sh
+
   mariadb:
     container_name: mariadb
     hostname: mariadb
@@ -53,6 +78,25 @@ services:
       - target: 3306
         host_ip: 0.0.0.0
         published: "3306"
+        protocol: tcp
+        mode: host
+    networks:
+      - default
+
+  mongo:
+    container_name: mongo
+    hostname: mongo
+    image: phpughh/roadrunner/mongo:${MONGO_VERSION}
+    volumes:
+      - mongo_data:/data/db
+      - ./res/graylog.js:/graylog.js
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+    ports:
+      - target: 27017
+        host_ip: 0.0.0.0
+        published: "27017"
         protocol: tcp
         mode: host
     networks:
@@ -76,6 +120,46 @@ services:
       - "traefik.http.routers.nginx.rule=HostRegexp(`{subdomain:.+}.phpug.hh`,`localhost`)"
       - "traefik.http.routers.nginx.priority=1"
       - "traefik.http.routers.nginx.service=nginx-svc"
+
+  opensearch:
+    container_name: opensearch
+    hostname: opensearch
+    image: phpughh/roadrunner/opensearch:${OPENSEARCH_VERSION}
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+      - ./res/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+    environment:
+      - discovery.type=single-node
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+      - "OPENSEARCH_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - target: 9200
+        host_ip: 0.0.0.0
+        published: "9200"
+        protocol: tcp
+        mode: host
+      - target: 9600
+        host_ip: 0.0.0.0
+        published: "9600"
+        protocol: tcp
+        mode: host
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.opensearch-svc.loadbalancer.server.port=9200"
+      - "traefik.http.routers.opensearch.entrypoints=http"
+      - "traefik.http.routers.opensearch.rule=Host(`opensearch.phpug.hh`)"
+      - "traefik.http.routers.opensearch.priority=2"
+      - "traefik.http.routers.opensearch.service=opensearch-svc"
 
   otel:
     container_name: otel-collector

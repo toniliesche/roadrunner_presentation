@@ -40,7 +40,7 @@ readonly final class TestUserLoadAsyncAction extends AbstractAPIAction
         for ($i = 0; $i < 10; $i++) {
             $promises = [];
             for ($j = 0; $j < 2; $j++) {
-                $promises[] = $this->userService->getUserAsync('http://nginx', $userId);
+                $promises[] = $this->userService->getUserAsync('http://www.phpug.hh', $userId);
             }
 
             Utils::unwrap($promises);

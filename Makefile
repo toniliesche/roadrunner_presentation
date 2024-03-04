@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-build-docker: build-nginx-base build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik build-grafana build-prometheus build-portainer
+build-docker: build-nginx-base build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik build-grafana build-prometheus build-portainer build-graylog build-mongo build-opensearch
 
 build-dev-cli: build-php-fpm
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain dev-cli
@@ -7,14 +7,23 @@ build-dev-cli: build-php-fpm
 build-grafana:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain grafana
 
+build-graylog:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain graylog
+
 build-mariadb:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain mariadb
+
+build-mongo:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain mongo
 
 build-nginx-base:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain nginx-base
 
 build-nginx: build-nginx-base
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain nginx
+
+build-opensearch:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain opensearch
 
 build-otel-collector:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain otel-collector
@@ -50,6 +59,7 @@ images:
 	docker images | grep phpughh
 
 clean:
+	docker volume prune -a -f
 	if [ -d tmp/cache ]; then sudo rm -rf tmp/cache/*; fi
 	if [ -d tmp/log ]; then sudo rm -rf tmp/log/*; fi
 	if [ -d tmp/proxies ]; then sudo rm -rf tmp/proxies/*; fi
@@ -100,6 +110,9 @@ init-db:
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli sh -c "mysql < roadrunner/res/init_zipkin.sql"
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli sh -c "mysql zipkin < roadrunner/res/zipkin.sql"
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli sh -c "mysql < roadrunner/res/init_zipkin_part2.sql"
+
+init-mongo:
+	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec mongo sh -c "mongosh -u root -p phpughh < /graylog.js"
 
 mysql:
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli mysql

@@ -1,0 +1,12 @@
+127.0.0.1       grafana.phpug.hh
+127.0.0.1       graylog.phpug.hh
+127.0.0.1       metrics.phpug.hh
+127.0.0.1       opensearch.phpug.hh
+127.0.0.1       otel.phpug.hh
+127.0.0.1       portainer.phpug.hh
+127.0.0.1       prometheus.phpug.hh
+127.0.0.1       start.phpug.hh
+127.0.0.1       status.phpug.hh
+127.0.0.1       traefik.phpug.hh
+127.0.0.1       www.phpug.hh
+127.0.0.1       zipkin.phpug.hh

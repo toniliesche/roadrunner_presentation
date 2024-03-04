@@ -33,7 +33,7 @@ readonly final class TestPingAction extends AbstractAPIAction
 
         Logging::audit()?->log('Accessing test ping page.');
         for ($i = 0; $i < 1000; $i++) {
-            $response = $this->pingService->ping('http://nginx');
+            $response = $this->pingService->ping('http://www.phpug.hh');
         }
 
         $stopwatchEvent->stop();

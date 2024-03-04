@@ -37,8 +37,8 @@ readonly final class TestPingAsyncAction extends AbstractAPIAction
         Logging::audit()?->log('Accessing test ping async page.');
         for ($i = 0; $i < 250; $i++) {
             $promises = [];
-            for ($j = 0; $j < 4; $j++) {
-                $promises[] = $this->pingService->pingAsync('http://nginx');
+            for ($j = 0; $j < 16; $j++) {
+                $promises[] = $this->pingService->pingAsync('http://www.phpug.hh');
             }
 
             Utils::unwrap($promises);
