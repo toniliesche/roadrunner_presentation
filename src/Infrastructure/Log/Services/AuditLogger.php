@@ -10,7 +10,7 @@ use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\AuditLoggerInterface;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\ContextProcessorInterface;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\MessageProcessorInterface;
 
-final readonly class AuditLogger implements AuditLoggerInterface
+readonly final class AuditLogger implements AuditLoggerInterface
 {
     public function __construct(
         private LoggerInterface $logger,

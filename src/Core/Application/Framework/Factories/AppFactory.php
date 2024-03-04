@@ -14,7 +14,7 @@ use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Exceptions\FileSystemExcept
 use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Models\Directory;
 use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Service\FileSystemService;
 
-final readonly class AppFactory
+readonly final class AppFactory
 {
     public function __construct(
         private ContainerInterface $container,

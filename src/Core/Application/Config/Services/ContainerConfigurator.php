@@ -55,6 +55,9 @@ use ToniLiesche\Roadrunner\Infrastructure\Log\Services\AuditLogger;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\LogEntryContextProvider;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\SqlLogger;
 
+use ToniLiesche\Roadrunner\Infrastructure\Metrics\Middlewares\RequestMetricsMiddleware;
+use ToniLiesche\Roadrunner\Infrastructure\Metrics\Services\MetricsService;
+use ToniLiesche\Roadrunner\Infrastructure\Metrics\Services\MetricsServiceFactory;
 use ToniLiesche\Roadrunner\Infrastructure\Tracing\Factories\TracerFactory;
 
 use function DI\autowire;
@@ -62,7 +65,7 @@ use function DI\create;
 use function DI\factory;
 use function DI\get;
 
-final readonly class ContainerConfigurator implements ContainerConfiguratorInterface
+readonly final class ContainerConfigurator implements ContainerConfiguratorInterface
 {
     public function getDefinitions(): array
     {
@@ -97,6 +100,9 @@ final readonly class ContainerConfigurator implements ContainerConfiguratorInter
             LoginFormAction::class => autowire(),
             LoginProcessAction::class => autowire(),
 
+            MetricsService::class => factory(MetricsServiceFactory::class),
+            MetricsServiceFactory::class => autowire(),
+
             PingAction::class => autowire(),
             PingServiceInterface::class => get(PingService::class),
             PingService::class => factory(PingServiceFactory::class),
@@ -106,6 +112,8 @@ final readonly class ContainerConfigurator implements ContainerConfiguratorInter
 
             RequestIdService::class => factory(RequestIdServiceFactory::class),
             RequestIdServiceFactory::class => create(),
+
+            RequestMetricsMiddleware::class => autowire(),
 
             ResponseFactoryInterface::class => get(Psr17Factory::class),
 

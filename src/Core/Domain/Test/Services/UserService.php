@@ -11,7 +11,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use ToniLiesche\Roadrunner\Core\Domain\Test\Interfaces\UserServiceInterface;
 
-final readonly class UserService implements UserServiceInterface
+readonly final class UserService implements UserServiceInterface
 {
     public function __construct(private Client $client)
     {

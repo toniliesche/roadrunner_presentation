@@ -13,8 +13,14 @@ services:
     labels:
       - "traefik.enable=true"
 
-      - "traefik.http.services.rr-svc.loadbalancer.server.port=2112"
-      - "traefik.http.routers.rr.entrypoints=http"
-      - "traefik.http.routers.rr.rule=HostRegexp(`metrics.phpug.hh`)"
-      - "traefik.http.routers.rr.priority=2"
-      - "traefik.http.routers.rr.service=rr-svc"
+      - "traefik.http.services.rr-metrics-svc.loadbalancer.server.port=2112"
+      - "traefik.http.routers.rr-metrics.entrypoints=http"
+      - "traefik.http.routers.rr-metrics.rule=Host(`metrics.phpug.hh`)"
+      - "traefik.http.routers.rr-metrics.priority=2"
+      - "traefik.http.routers.rr-metrics.service=rr-metrics-svc"
+
+      - "traefik.http.services.rr-stats-svc.loadbalancer.server.port=2114"
+      - "traefik.http.routers.rr-stats.entrypoints=http"
+      - "traefik.http.routers.rr-stats.rule=Host(`status.phpug.hh`)"
+      - "traefik.http.routers.rr-stats.priority=2"
+      - "traefik.http.routers.rr-stats.service=rr-stats-svc"

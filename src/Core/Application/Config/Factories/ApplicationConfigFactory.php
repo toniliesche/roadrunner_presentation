@@ -9,7 +9,7 @@ use ToniLiesche\Roadrunner\Core\Application\Config\Exceptions\MissingConfigValue
 use ToniLiesche\Roadrunner\Core\Application\Config\Models\Config;
 use ToniLiesche\Roadrunner\Core\Application\Library\Enums\PHPRuntime;
 
-final readonly class ApplicationConfigFactory
+readonly final class ApplicationConfigFactory
 {
     /**
      * @throws InvalidConfigValueException

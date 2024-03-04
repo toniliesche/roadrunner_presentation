@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-build-docker: build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik build-grafana
+build-docker: build-nginx-base build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik build-grafana build-prometheus build-portainer
 
 build-dev-cli: build-php-fpm
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain dev-cli
@@ -10,7 +10,10 @@ build-grafana:
 build-mariadb:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain mariadb
 
-build-nginx:
+build-nginx-base:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain nginx-base
+
+build-nginx: build-nginx-base
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain nginx
 
 build-otel-collector:
@@ -27,6 +30,12 @@ build-php-rr: build-php-fpm
 
 build-php-rr-dev: build-php-rr
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain roadrunner-dev
+
+build-portainer:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain portainer
+
+build-prometheus:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain prometheus
 
 build-traefik:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain traefik
@@ -59,6 +68,9 @@ sql-logs:
 
 nginx-logs:
 	docker logs --tail 100 -f nginx
+
+rr-logs:
+	docker logs --tail 100 -f php
 
 down:
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh down

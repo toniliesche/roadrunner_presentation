@@ -12,7 +12,7 @@ use ToniLiesche\Roadrunner\Core\Application\Library\Exceptions\UnexpectedValueEx
 use ToniLiesche\Roadrunner\Infrastructure\Http\Enums\HttpStatus;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
 
-final readonly class PingAction extends AbstractAPIAction
+readonly final class PingAction extends AbstractAPIAction
 {
     /**
      * @throws UnexpectedValueException

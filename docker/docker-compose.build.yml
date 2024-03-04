@@ -7,6 +7,10 @@ services:
         codeception_asserts_version: ${CODECEPTION_ASSERTS_VERSION}
         mariadb_root_password: ${MARIADB_ROOT_PASSWORD}
         php_version: ${PHP_VERSION}
+      tags:
+        - phpughh/roadrunner/php:${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}-cli
+        - phpughh/roadrunner/php:${PHP_VERSION_MAJOR}-cli
+        - phpughh/roadrunner/php:latest-cli
     image: phpughh/roadrunner/php:${PHP_VERSION}-cli
 
   grafana:
@@ -14,6 +18,10 @@ services:
       context: build/grafana
       args:
         grafana_version: ${GRAFANA_VERSION}
+      tags:
+        - phpughh/roadrunner/grafana:${GRAFANA_VERSION_MAJOR}.${GRAFANA_VERSION_MINOR}
+        - phpughh/roadrunner/grafana:${GRAFANA_VERSION_MAJOR}
+        - phpughh/roadrunner/grafana:latest
     image: phpughh/roadrunner/grafana:${GRAFANA_VERSION}
 
   mariadb:
@@ -21,13 +29,32 @@ services:
       context: build/mariadb
       args:
         mariadb_version: ${MARIADB_VERSION}
+      tags:
+        - phpughh/roadrunner/mariadb:${MARIADB_VERSION_MAJOR}.${MARIADB_VERSION_MINOR}
+        - phpughh/roadrunner/mariadb:${MARIADB_VERSION_MAJOR}
+        - phpughh/roadrunner/mariadb:latest
     image: phpughh/roadrunner/mariadb:${MARIADB_VERSION}
+
+  nginx-base:
+    build:
+      context: build/nginx-base
+      args:
+        nginx_version: ${NGINX_VERSION}
+      tags:
+        - phpughh/roadrunner/nginx:${NGINX_VERSION_MAJOR}.${NGINX_VERSION_MINOR}-base
+        - phpughh/roadrunner/nginx:${NGINX_VERSION_MAJOR}-base
+        - phpughh/roadrunner/nginx:latest-base
+    image: phpughh/roadrunner/nginx:${NGINX_VERSION}-base
 
   nginx:
     build:
       context: build/nginx
       args:
         nginx_version: ${NGINX_VERSION}
+      tags:
+        - phpughh/roadrunner/nginx:${NGINX_VERSION_MAJOR}.${NGINX_VERSION_MINOR}
+        - phpughh/roadrunner/nginx:${NGINX_VERSION_MAJOR}
+        - phpughh/roadrunner/nginx:latest
     image: phpughh/roadrunner/nginx:${NGINX_VERSION}
 
   otel-collector:
@@ -35,6 +62,10 @@ services:
       context: build/otel-collector
       args:
         otel_collector_version: ${OTEL_COLLECTOR_VERSION}
+      tags:
+        - phpughh/roadrunner/otel-collector:${OTEL_COLLECTOR_VERSION_MAJOR}.${OTEL_COLLECTOR_VERSION_MINOR}
+        - phpughh/roadrunner/otel-collector:${OTEL_COLLECTOR_VERSION_MAJOR}
+        - phpughh/roadrunner/otel-collector:latest
     image: phpughh/roadrunner/otel-collector:${OTEL_COLLECTOR_VERSION}
 
   php:
@@ -42,6 +73,10 @@ services:
       context: build/php-fpm
       args:
         php_version: ${PHP_VERSION}
+      tags:
+        - phpughh/roadrunner/php:${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}-fpm
+        - phpughh/roadrunner/php:${PHP_VERSION_MAJOR}-fpm
+        - phpughh/roadrunner/php:latest-fpm
     image: phpughh/roadrunner/php:${PHP_VERSION}-fpm
 
   php-dev:
@@ -49,7 +84,33 @@ services:
       context: build/php-fpm-dev
       args:
         php_version: ${PHP_VERSION}
+      tags:
+        - phpughh/roadrunner/php:${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}-fpm-dev
+        - phpughh/roadrunner/php:${PHP_VERSION_MAJOR}-fpm-dev
+        - phpughh/roadrunner/php:latest-fpm-dev
     image: phpughh/roadrunner/php:${PHP_VERSION}-fpm-dev
+
+  portainer:
+    build:
+      context: build/portainer
+      args:
+        portainer_version: ${PORTAINER_VERSION}
+      tags:
+        - phpughh/roadrunner/portainer:${PORTAINER_VERSION_MAJOR}.${PORTAINER_VERSION_MINOR}
+        - phpughh/roadrunner/portainer:${PORTAINER_VERSION_MAJOR}
+        - phpughh/roadrunner/portainer:latest
+    image: phpughh/roadrunner/portainer:${PORTAINER_VERSION}
+
+  prometheus:
+    build:
+      context: build/prometheus
+      args:
+        prometheus_version: ${PROMETHEUS_VERSION}
+      tags:
+        - phpughh/roadrunner/prometheus:${PROMETHEUS_VERSION_MAJOR}.${PROMETHEUS_VERSION_MINOR}
+        - phpughh/roadrunner/prometheus:${PROMETHEUS_VERSION_MAJOR}
+        - phpughh/roadrunner/prometheus:latest
+    image: phpughh/roadrunner/prometheus:${PROMETHEUS_VERSION}
 
   roadrunner:
     build:
@@ -57,6 +118,10 @@ services:
       args:
         php_version: ${PHP_VERSION}
         roadrunner_version: ${ROADRUNNER_VERSION}
+      tags:
+        - phpughh/roadrunner/roadrunner:${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}-rr
+        - phpughh/roadrunner/roadrunner:${PHP_VERSION_MAJOR}-rr
+        - phpughh/roadrunner/roadrunner:latest-rr
     image: phpughh/roadrunner/php:${PHP_VERSION}-rr
 
   roadrunner-dev:
@@ -64,6 +129,10 @@ services:
       context: build/php-rr-dev
       args:
         php_version: ${PHP_VERSION}
+      tags:
+        - phpughh/roadrunner/roadrunner:${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}-rr-dev
+        - phpughh/roadrunner/roadrunner:${PHP_VERSION_MAJOR}-rr-dev
+        - phpughh/roadrunner/roadrunner:latest-rr-dev
     image: phpughh/roadrunner/php:${PHP_VERSION}-rr-dev
 
   traefik:
@@ -71,6 +140,10 @@ services:
       context: build/traefik
       args:
         traefik_version: ${TRAEFIK_VERSION}
+      tags:
+        - phpughh/roadrunner/traefik:${TRAEFIK_VERSION_MAJOR}.${TRAEFIK_VERSION_MINOR}
+        - phpughh/roadrunner/traefik:${TRAEFIK_VERSION_MAJOR}
+        - phpughh/roadrunner/traefik:latest
     image: phpughh/roadrunner/traefik:${TRAEFIK_VERSION}
 
   zipkin:
@@ -78,4 +151,8 @@ services:
       context: build/zipkin
       args:
         zipkin_version: ${ZIPKIN_VERSION}
+      tags:
+        - phpughh/roadrunner/zipkin:${ZIPKIN_VERSION_MAJOR}.${ZIPKIN_VERSION_MINOR}
+        - phpughh/roadrunner/zipkin:${ZIPKIN_VERSION_MAJOR}
+        - phpughh/roadrunner/zipkin:latest
     image: phpughh/roadrunner/zipkin:${ZIPKIN_VERSION}

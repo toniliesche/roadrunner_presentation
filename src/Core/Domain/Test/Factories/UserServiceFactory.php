@@ -10,7 +10,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ToniLiesche\Roadrunner\Core\Domain\Test\Services\UserService;
 
-final readonly class UserServiceFactory
+readonly final class UserServiceFactory
 {
     /**
      * @throws ContainerExceptionInterface

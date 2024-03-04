@@ -169,6 +169,14 @@ function run_webapp_rr(string $appname): void
 
     $factory = new TracerProviderFactory();
 
+    $tracerProvider = $factory->create();
+    $requestTracer = $tracerProvider->getTracer('application');
+
+    $span = $requestTracer
+        ->spanBuilder('bootstrap')
+        ->startSpan();
+    $spanScope = $span->activate();
+
     Logging::application()?->debug(LogCategory::FRAMEWORK, 'Application bootstrap complete. Start listening.');
 
     $requestIdService = $container->get(RequestIdService::class);
@@ -177,6 +185,10 @@ function run_webapp_rr(string $appname): void
     $roadrunnerRequestCleaningService->processOnWarmup();
 
     $psr7worker = bootstrap_roadrunner();
+
+    $spanScope->detach();
+    $span->end();
+    $tracerProvider->shutdown();
     while (true) {
         try {
             Logging::application()?->debug(LogCategory::FRAMEWORK, 'Waiting for new request.');
@@ -188,10 +200,10 @@ function run_webapp_rr(string $appname): void
             }
 
             $tracerProvider = $factory->create();
-            $tracer = $tracerProvider->getTracer('application');
+            $requestTracer = $tracerProvider->getTracer('application');
 
-            $span = $tracer
-                ->spanBuilder('webapp')
+            $span = $requestTracer
+                ->spanBuilder('request')
                 ->startSpan();
             $spanScope = $span->activate();
 

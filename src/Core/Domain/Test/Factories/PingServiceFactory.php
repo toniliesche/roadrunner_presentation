@@ -10,7 +10,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ToniLiesche\Roadrunner\Core\Domain\Test\Services\PingService;
 
-final readonly class PingServiceFactory
+readonly final class PingServiceFactory
 {
     /**
      * @throws ContainerExceptionInterface

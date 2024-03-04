@@ -4,6 +4,13 @@ rpc:
   listen: tcp://127.0.0.1:6001
 metrics:
   address: 0.0.0.0:2112
+  collect:
+    http_requests:
+      type: histogram
+      help: Collected HTTP Requests.
+      labels: ["route", "metrics", "status"]
+status:
+  address: 0.0.0.0:2114
 server:
   command: "php bin/roadrunner.php -dopcache.jit=tracing -dopcache.jit_buffer_size=100M"
   user: "www-data"
@@ -32,7 +39,7 @@ otel:
 http:
   fcgi:
     address: tcp://0.0.0.0:9000
-  middleware: [gzip, otel]
+  middleware: [http_metrics, gzip, otel]
   pool:
     debug: true
     num_workers: 1

@@ -10,7 +10,7 @@ use Stringable;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\ContextProcessorInterface;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\MessageProcessorInterface;
 
-final readonly class SqlLogger implements LoggerInterface
+readonly final class SqlLogger implements LoggerInterface
 {
     public function __construct(
         private LoggerInterface $logger,

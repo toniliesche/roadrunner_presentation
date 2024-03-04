@@ -13,8 +13,9 @@ use ToniLiesche\Roadrunner\Core\Application\Config\Models\Config;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Middlewares\RequestIdMiddleware;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Services\ErrorHandler;
 use ToniLiesche\Roadrunner\Core\Application\Library\Enums\PHPRuntime;
+use ToniLiesche\Roadrunner\Infrastructure\Metrics\Middlewares\RequestMetricsMiddleware;
 
-final readonly class MiddlewareConfigurator implements MiddlewareConfiguratorInterface
+readonly final class MiddlewareConfigurator implements MiddlewareConfiguratorInterface
 {
     /**
      * @throws ContainerExceptionInterface
@@ -25,6 +26,8 @@ final readonly class MiddlewareConfigurator implements MiddlewareConfiguratorInt
         $config = $container->get(Config::class);
         if (PHPRuntime::PHP_FPM === $config->getSystemConfig()->getRuntime()) {
             $app->addMiddleware($container->get(RequestIdMiddleware::class));
+        } else {
+            $app->add(RequestMetricsMiddleware::class);
         }
 
         /** These must be added last because they need to be executed first */

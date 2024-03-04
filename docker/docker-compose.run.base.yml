@@ -1,11 +1,13 @@
 networks:
   default:
-    name: phpughh
+    name: phpughh_roadrunner
 
 volumes:
   grafana_data:
   mariadb_backup:
   mariadb_data:
+  portainer_data:
+  prometheus_data:
 
 services:
   dev-cli:
@@ -44,6 +46,7 @@ services:
     image: phpughh/roadrunner/mariadb:${MARIADB_VERSION}
     volumes:
       - mariadb_backup:/backup
+      - mariadb_data:/var/lib/mysql
     environment:
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
     ports:
@@ -91,6 +94,59 @@ services:
       - "traefik.http.routers.otel.rule=Host(`otel-collector.phpug.hh`)"
       - "traefik.http.routers.otel.priority=2"
       - "traefik.http.routers.otel.service=otel-svc"
+
+  portainer:
+    container_name: portainer
+    hostname: portainer
+    image: phpughh/roadrunner/portainer:${PORTAINER_VERSION}
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+      - "traefik.http.routers.portainer.entrypoints=http"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.phpug.hh`)"
+      - "traefik.http.routers.portainer.priority=2"
+      - "traefik.http.routers.portainer.service=portainer-svc"
+
+  prometheus:
+    container_name: prometheus
+    hostname: prometheus
+    image: phpughh/roadrunner/prometheus:${PROMETHEUS_VERSION}
+    volumes:
+      - prometheus_data:/prometheus
+      - ./res/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.prometheus-svc.loadbalancer.server.port=9090"
+      - "traefik.http.routers.prometheus.entrypoints=http"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.phpug.hh`)"
+      - "traefik.http.routers.prometheus.priority=2"
+      - "traefik.http.routers.prometheus.service=prometheus-svc"
+
+  start:
+    container_name: start
+    hostname: start
+    image: phpughh/roadrunner/nginx:${NGINX_VERSION}-base
+    volumes:
+      - ./res/start:/usr/share/nginx/html
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.start-svc.loadbalancer.server.port=80"
+      - "traefik.http.routers.start.entrypoints=http"
+      - "traefik.http.routers.start.rule=Host(`start.phpug.hh`)"
+      - "traefik.http.routers.start.priority=2"
+      - "traefik.http.routers.start.service=start-svc"
 
   traefik:
     container_name: traefik

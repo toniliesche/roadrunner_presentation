@@ -11,7 +11,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use ToniLiesche\Roadrunner\Core\Domain\Test\Interfaces\PingServiceInterface;
 
-final readonly class PingService implements PingServiceInterface
+readonly final class PingService implements PingServiceInterface
 {
     public function __construct(private Client $client)
     {
