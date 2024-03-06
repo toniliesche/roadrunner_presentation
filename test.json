@@ -1,0 +1,13 @@
+{
+  "version": "1.1",
+  "host": "dev01.test.int.phphug.hh",
+  "short_message": "Container created. Start application bootstrap.",
+  "timestamp": "1709593801.119",
+  "level": 7,
+  "_category": "framework",
+  "_application": "roadrunner",
+  "_stage": "dev",
+  "_process_id": 23,
+  "_request_id": "roadrunner-53c3250e-da7c-11ee-9dfa-02420a05040e",
+  "_referral_id": "roadrunner-53c3250e-da7c-11ee-9dfa-02420a05040e"
+}

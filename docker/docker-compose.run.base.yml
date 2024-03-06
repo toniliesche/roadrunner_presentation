@@ -25,6 +25,16 @@ services:
     networks:
       - default
 
+  filebeat:
+    container_name: filebeat
+    hostname: filebeat
+    image: phpughh/roadrunner/filebeat:${FILEBEAT_VERSION}
+    volumes:
+      - ./res/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ../tmp/log:/var/log/phpughh
+    networks:
+      - default
+
   grafana:
     container_name: grafana
     hostname: grafana

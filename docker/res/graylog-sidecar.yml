@@ -1,0 +1,9 @@
+server_url: http://graylog:9000/api/
+server_api_token: dl1vltg9joev8o1s16a1jdubts9s9c5n1m2254mumkoubun6rt3
+node_id: 1
+node_name: sidecar
+update_interval: 10
+list_log_files:
+  - "/var/log/phpughh"
+log_rotate_max_file_size: "10MiB"
+log_rotate_keep_files: 10

@@ -1,14 +1,20 @@
 SHELL := /bin/bash
-build-docker: build-nginx-base build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik build-grafana build-prometheus build-portainer build-graylog build-mongo build-opensearch
+build-docker: build-nginx-base build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik build-grafana build-prometheus build-portainer build-graylog build-mongo build-opensearch build-filebeat build-ubuntu build-graylog-sidecar
 
 build-dev-cli: build-php-fpm
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain dev-cli
+
+build-filebeat:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain filebeat
 
 build-grafana:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain grafana
 
 build-graylog:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain graylog
+
+build-graylog-sidecar: build-ubuntu
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain graylog-sidecar
 
 build-mariadb:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain mariadb
@@ -48,6 +54,9 @@ build-prometheus:
 
 build-traefik:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain traefik
+
+build-ubuntu:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain ubuntu
 
 build-zipkin:
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain zipkin

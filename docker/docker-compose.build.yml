@@ -24,6 +24,17 @@ services:
         - phpughh/roadrunner/grafana:latest
     image: phpughh/roadrunner/grafana:${GRAFANA_VERSION}
 
+  filebeat:
+    build:
+      context: build/filebeat
+      args:
+        filebeat_version: ${FILEBEAT_VERSION}
+      tags:
+        - phpughh/roadrunner/filebeat:${FILEBEAT_VERSION_MAJOR}.${FILEBEAT_VERSION_MINOR}
+        - phpughh/roadrunner/filebeat:${FILEBEAT_VERSION_MAJOR}
+        - phpughh/roadrunner/filebeat:latest
+    image: phpughh/roadrunner/filebeat:${FILEBEAT_VERSION}
+
   graylog:
     build:
       context: build/graylog
@@ -35,6 +46,20 @@ services:
         - phpughh/roadrunner/graylog:${GRAYLOG_VERSION_MAJOR}
         - phpughh/roadrunner/graylog:latest
     image: phpughh/roadrunner/graylog:${GRAYLOG_VERSION}
+
+  graylog-sidecar:
+    build:
+      context: build/graylog-sidecar
+      args:
+        graylog_sidecar_version: ${GRAYLOG_SIDECAR_VERSION}
+        graylog_sidecar_version_patch: ${GRAYLOG_SIDECAR_VERSION_PATCH}
+        ubuntu_version: ${UBUNTU_VERSION_GRAYLOG_SIDECAR}
+      tags:
+        - phpughh/roadrunner/graylog-sidecar:${GRAYLOG_SIDECAR_VERSION_MAJOR}.${GRAYLOG_SIDECAR_VERSION_MINOR}.${GRAYLOG_SIDECAR_VERSION_BUGFIX}
+        - phpughh/roadrunner/graylog-sidecar:${GRAYLOG_SIDECAR_VERSION_MAJOR}.${GRAYLOG_SIDECAR_VERSION_MINOR}
+        - phpughh/roadrunner/graylog-sidecar:${GRAYLOG_SIDECAR_VERSION_MAJOR}
+        - phpughh/roadrunner/graylog-sidecar:latest
+    image: phpughh/roadrunner/graylog-sidecar:${GRAYLOG_SIDECAR_VERSION_FULL}
 
   mariadb:
     build:
@@ -180,6 +205,17 @@ services:
         - phpughh/roadrunner/traefik:${TRAEFIK_VERSION_MAJOR}
         - phpughh/roadrunner/traefik:latest
     image: phpughh/roadrunner/traefik:${TRAEFIK_VERSION}
+
+  ubuntu:
+    build:
+      context: build/ubuntu
+      args:
+        ubuntu_version: ${UBUNTU_VERSION_CODENAME}
+      tags:
+        - phpughh/roadrunner/ubuntu:${UBUNTU_VERSION}
+        - phpughh/roadrunner/ubuntu:${UBUNTU_VERSION_CODENAME_NAME}
+        - phpughh/roadrunner/ubuntu:latest
+    image: phpughh/roadrunner/ubuntu:${UBUNTU_VERSION_CODENAME}
 
   zipkin:
     build:

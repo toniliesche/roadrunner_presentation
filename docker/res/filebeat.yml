@@ -1,0 +1,79 @@
+filebeat.inputs:
+  - type: filestream
+    id: application-log
+    paths:
+      - '/var/log/phpughh/roadrunner.log'
+    fields_under_root: true
+    fields:
+      host: dev01.test.int.phphug.hh
+
+processors:
+  - decode_json_fields:
+      fields: ["message"]
+      target: ""
+      overwrite_keys: true
+      add_error_key: true
+  - replace:
+      fields:
+        - field: "timestamp"
+          pattern: "\\."
+          replacement: ""
+      ignore_missing: false
+      fail_on_error: false
+  - timestamp:
+      field: timestamp
+      target_field: "@timestamp"
+      ignore_missing: false
+      ignore_failure: false
+      layouts:
+        - UNIX_MS
+  - drop_fields:
+      fields:
+        - "agent.name"
+        - "agent.hostname"
+        - "agent.ephemeral_id"
+        - "agent.id"
+        - "agent.type"
+        - "agent.version"
+        - "ecs.version"
+        - "host.name"
+        - "input.type"
+        - "log.file.device_id"
+        - "log.file.inode"
+        - "log.file.path"
+        - "log.offset"
+        - "message"
+        - "timestamp"
+        - "version"
+  - rename:
+      fields:
+        - from: "_application"
+          to: "application"
+        - from: "_category"
+          to: "category"
+        - from: "_process_id"
+          to: "process_id"
+        - from: "_referral_id"
+          to: "referral_id"
+        - from: "_request_id"
+          to: "request_id"
+        - from: "_stage"
+          to: "stage"
+        - from: "short_message"
+          to: "message"
+      fail_on_error: false
+      ignore_missing: true
+  - script:
+      lang: javascript
+      id: copy_field_to_source
+      source: >
+        function process(event) {
+          event.Put("source", event.Get("host"));
+        }
+
+output.logstash:
+  hosts: [ "graylog:5044" ]
+
+logging.to_files: true
+logging.to_syslog: false
+logging.to_stderr: true
