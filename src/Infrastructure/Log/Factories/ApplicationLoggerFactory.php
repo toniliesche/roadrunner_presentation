@@ -8,6 +8,7 @@ use Monolog\Level;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Spiral\Goridge\RPC\RPC;
 use ToniLiesche\Roadrunner\Core\Application\Config\Models\Config;
 use ToniLiesche\Roadrunner\Core\Application\Library\Enums\LogType;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Interfaces\ApplicationLoggerInterface;
@@ -37,13 +38,22 @@ readonly final class ApplicationLoggerFactory extends AbstractLoggerFactory
             'Y-m-d H:i:s'
         );
 
-        return new ApplicationLogger(
-            $this->createLogger(
+        $logger = match ($logConfig->getLogType()) {
+            LogType::OTEL => $this->createOtelLogger(
+                $config->getApplicationConfig()->getName(),
+                Level::fromName($logConfig->getLogLevel()),
+            ),
+            LogType::ROADRUNNER => $this->createRRLogger($container->get(RPC::class)),
+            default => $this->createFileLogger(
                 $config->getApplicationConfig()->getName(),
                 $file,
                 Level::fromName($logConfig->getLogLevel()),
                 $formatter
-            ),
+            )
+        };
+
+        return new ApplicationLogger(
+            $logger,
             $this->createMessageProcessor($container, $logConfig->getLogType()),
             $this->createContextProcessor($container, $logConfig->getLogType()),
         );

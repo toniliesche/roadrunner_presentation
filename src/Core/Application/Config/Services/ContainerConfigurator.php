@@ -7,9 +7,9 @@ namespace ToniLiesche\Roadrunner\Core\Application\Config\Services;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use OpenTelemetry\API\Trace\TracerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Views\Twig;
+use Spiral\Goridge\RPC\RPC;
 use ToniLiesche\Roadrunner\Core\Application\Config\Interfaces\ContainerConfiguratorInterface;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\ErrorHandlerFactory;
 use ToniLiesche\Roadrunner\Core\Application\Framework\Factories\RequestIdServiceFactory;
@@ -41,6 +41,7 @@ use ToniLiesche\Roadrunner\Core\Domain\Users\Services\UserService;
 use ToniLiesche\Roadrunner\Infrastructure\Database\Factories\EntityManagerFactory;
 use ToniLiesche\Roadrunner\Infrastructure\Database\Users\UserDataProvider;
 use ToniLiesche\Roadrunner\Infrastructure\Database\Users\UserRepository;
+use ToniLiesche\Roadrunner\Infrastructure\Engine\Factories\RPCFactory;
 use ToniLiesche\Roadrunner\Infrastructure\Engine\Services\RoadrunnerRequestCleaningService;
 use ToniLiesche\Roadrunner\Infrastructure\Http\Factories\ClientFactory;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Factories\ApplicationLoggerFactory;
@@ -54,11 +55,9 @@ use ToniLiesche\Roadrunner\Infrastructure\Log\Services\ApplicationLogger;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\AuditLogger;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\LogEntryContextProvider;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Services\SqlLogger;
-
 use ToniLiesche\Roadrunner\Infrastructure\Metrics\Middlewares\RequestMetricsMiddleware;
 use ToniLiesche\Roadrunner\Infrastructure\Metrics\Services\MetricsService;
 use ToniLiesche\Roadrunner\Infrastructure\Metrics\Services\MetricsServiceFactory;
-use ToniLiesche\Roadrunner\Infrastructure\Tracing\Factories\TracerFactory;
 
 use function DI\autowire;
 use function DI\create;
@@ -119,6 +118,9 @@ readonly final class ContainerConfigurator implements ContainerConfiguratorInter
 
             RoadrunnerRequestCleaningService::class => create(),
 
+            RPC::class => factory(RPCFactory::class),
+            RPCFactory::class => autowire(),
+
             SqlLoggerInterface::class => get(SqlLogger::class),
             SqlLogger::class => factory(SqlLoggerFactory::class),
             SqlLoggerFactory::class => create(),
@@ -127,9 +129,6 @@ readonly final class ContainerConfigurator implements ContainerConfiguratorInter
 
             TestPingAction::class => autowire(),
             TestPingAsyncAction::class => autowire(),
-
-            TracerFactory::class => autowire(),
-            TracerInterface::class => factory(TracerFactory::class),
 
             Twig::class => factory(TwigFactory::class),
             TwigResponseRenderer::class => autowire(),

@@ -18,6 +18,8 @@ server:
     - XDEBUG_SESSION: 1
     - PHP_IDE_CONFIG: serverName=www.phpug.hh
     - OTEL_SERVICE_NAME: php
+    - OTEL_LOGS_EXPORTER: console
+    - OTEL_METRICS_EXPORTER: console
     - OTEL_TRACES_EXPORTER: otlp
     - OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
     - OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector.phpug.hh

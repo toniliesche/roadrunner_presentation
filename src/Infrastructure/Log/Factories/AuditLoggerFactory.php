@@ -37,7 +37,7 @@ readonly final class AuditLoggerFactory extends AbstractLoggerFactory
         );
 
         return new AuditLogger(
-            $this->createLogger(
+            $this->createFileLogger(
                 \sprintf('%s-audit', $config->getApplicationConfig()->getName()),
                 $file,
                 Level::Info,

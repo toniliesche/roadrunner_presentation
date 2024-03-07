@@ -26,8 +26,11 @@ framework:
   log:
     logLevel: debug
     logPath: /var/www/webapp/tmp/log
+#    logType: dev
 #    logType: local
     logType: graylog
+#    logType: otel
+#    logType: rr
     debug: false
   router:
     cachePath: /var/www/webapp/tmp/cache/fast-route

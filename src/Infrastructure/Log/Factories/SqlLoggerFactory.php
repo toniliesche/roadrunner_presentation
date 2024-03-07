@@ -37,7 +37,7 @@ readonly final class SqlLoggerFactory extends AbstractLoggerFactory
         );
 
         return new SqlLogger(
-            $this->createLogger(
+            $this->createFileLogger(
                 'sql',
                 $file,
                 Level::Debug,
