@@ -26,6 +26,8 @@
     "guzzlehttp/psr7": "^2.6",
     "monolog/monolog": "^3.5",
     "nyholm/psr7": "^1.8",
+    "open-telemetry/api": "^1.0",
+    "open-telemetry/context": "^1.0",
     "open-telemetry/exporter-otlp": "^1.0",
     "open-telemetry/opentelemetry-auto-slim": "^1.0",
     "open-telemetry/opentelemetry-logger-monolog": "^1.0",
@@ -41,16 +43,17 @@
     "psr/http-server-middleware": "^1.0",
     "psr/log": "^3.0",
     "ramsey/uuid": "^4.7",
+    "roadrunner-php/app-logger": "^1.2",
     "slim/slim": "^4.13",
     "slim/twig-view": "^3.3",
+    "spiral/goridge": "^4.1",
     "spiral/roadrunner": "^2023.3",
     "spiral/roadrunner-http": "^3.4",
     "spiral/roadrunner-metrics": "^3.1",
     "spiral/roadrunner-worker": "^3.4",
     "symfony/cache": "^7.0",
     "symfony/stopwatch": "^7.0",
-    "twig/twig": "^3.8",
-    "roadrunner-php/app-logger": "^1.2"
+    "twig/twig": "^3.8"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
