@@ -3,6 +3,7 @@ networks:
     name: phpughh_roadrunner
 
 volumes:
+  checkmk_data:
   grafana_data:
   mariadb_backup:
   mariadb_data:
@@ -12,6 +13,23 @@ volumes:
   prometheus_data:
 
 services:
+  checkmk:
+    container_name: checkmk
+    hostname: checkmk
+    image: phpughh/roadrunner/checkmk:${CHECKMK_VERSION}
+    volumes:
+      - checkmk_data:/omd/sites
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.services.checkmk-svc.loadbalancer.server.port=5000"
+      - "traefik.http.routers.checkmk.entrypoints=http"
+      - "traefik.http.routers.checkmk.rule=Host(`checkmk.phpug.hh`)"
+      - "traefik.http.routers.checkmk.priority=2"
+      - "traefik.http.routers.checkmk.service=checkmk-svc"
+
   dev-cli:
     container_name: dev-cli
     hostname: dev-cli

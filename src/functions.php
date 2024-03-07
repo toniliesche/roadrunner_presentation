@@ -26,6 +26,7 @@ use ToniLiesche\Roadrunner\Infrastructure\FileSystem\Exceptions\FileSystemExcept
 use ToniLiesche\Roadrunner\Infrastructure\Http\Enums\HttpStatus;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Enums\LogCategory;
 use ToniLiesche\Roadrunner\Infrastructure\Log\Logging;
+use ToniLiesche\Roadrunner\Infrastructure\Tracing\Tracing;
 
 /**
  * @throws JsonException
@@ -101,6 +102,7 @@ function bootstrap_app(string $runtime): App
 
     Logging::init($container);
     Logging::application()?->debug(LogCategory::FRAMEWORK, 'Container created. Start application bootstrap.');
+    Tracing::init($container);
 
     $appFactory = new AppFactory(
         $container,
@@ -167,16 +169,7 @@ function run_webapp_rr(string $appname): void
         error_500('Container could not be retrieved');
     }
 
-    $factory = new TracerProviderFactory();
-
-    $tracerProvider = $factory->create();
-    $requestTracer = $tracerProvider->getTracer('application');
-
-    $span = $requestTracer
-        ->spanBuilder('bootstrap')
-        ->startSpan();
-    $spanScope = $span->activate();
-
+    Tracing::start('boostrap');
     Logging::application()?->debug(LogCategory::FRAMEWORK, 'Application bootstrap complete. Start listening.');
 
     $requestIdService = $container->get(RequestIdService::class);
@@ -186,9 +179,7 @@ function run_webapp_rr(string $appname): void
 
     $psr7worker = bootstrap_roadrunner();
 
-    $spanScope->detach();
-    $span->end();
-    $tracerProvider->shutdown();
+    Tracing::finish();
     while (true) {
         try {
             Logging::application()?->debug(LogCategory::FRAMEWORK, 'Waiting for new request.');
@@ -199,61 +190,49 @@ function run_webapp_rr(string $appname): void
                 break;
             }
 
-            $tracerProvider = $factory->create();
-            $requestTracer = $tracerProvider->getTracer('application');
-
-            $span = $requestTracer
-                ->spanBuilder('request')
-                ->startSpan();
-            $spanScope = $span->activate();
-
-            $span->addEvent('Got new request.');
+            Tracing::start('request');
+            Tracing::addEvent('Got new request.');
             Logging::application()?->debug(LogCategory::FRAMEWORK, 'Got new request.');
 
         } catch (Throwable $t) {
-            $span?->addEvent('Failed initializing request.', ['error' => $t->getMessage()]);
+            Tracing::addEvent('Failed initializing request.', ['error' => $t->getMessage()]);
             Logging::application()?->error(LogCategory::FRAMEWORK, 'Failed initializing request.', ['error' => $t->getMessage()]);
             $psr7worker->respond(new Response(500, [], error_output(500, 'something went wrong')));
             $roadrunnerRequestCleaningService->processAfterRequest();
 
-            $spanScope?->detach();
-            $span?->end();
+            Tracing::finish();
             continue;
         }
 
         try {
-            $span->addEvent('Performing pre-request tasks.');
+            Tracing::addEvent('Performing pre-request tasks.');
             Logging::application()?->debug(LogCategory::FRAMEWORK, 'Performing pre-request tasks.');
             $requestIdService->parseReferralId($request);
             $roadrunnerRequestCleaningService->processBeforeRequest();
         } catch (Throwable $t) {
-            $span->addEvent('Failed running pre-request tasks.', ['error' => $t->getMessage()]);
+            Tracing::addEvent('Failed running pre-request tasks.', ['error' => $t->getMessage()]);
             Logging::application()?->error(LogCategory::FRAMEWORK, 'Failed running pre-request tasks.', ['error' => $t->getMessage()]);
 
-            $spanScope->detach();
-            $span->end();
+            Tracing::finish();
             continue;
         }
 
         try {
-            $span->addEvent('Starting request processing.');
+            Tracing::addEvent('Starting request processing.');
             Logging::application()?->debug(LogCategory::FRAMEWORK, 'Starting request processing.');
             $response = $app->handle($request);
 
             $psr7worker->respond($response);
-            $span->addEvent('Finished request processing.');
+            Tracing::addEvent('Finished request processing.');
             Logging::application()?->debug(LogCategory::FRAMEWORK, 'Finished request processing.');
         } catch (Throwable $t) {
-            $span->addEvent('Got uncaught throwable while processing request.', ['error' => $t->getMessage()]);
+            Tracing::addEvent('Got uncaught throwable while processing request.', ['error' => $t->getMessage()]);
             Logging::application()?->error(LogCategory::FRAMEWORK, 'Got uncaught throwable while processing request.', ['error' => $t->getMessage()]);
             $psr7worker->respond(new Response(500, [], error_output(500, 'something went wrong')));
 
         } finally {
             $roadrunnerRequestCleaningService->processAfterRequest();
-
-            $spanScope->detach();
-            $span->end();
-            $tracerProvider->shutdown();
+            Tracing::finish();
         }
     }
 }

@@ -1,4 +1,16 @@
 services:
+  checkmk:
+    build:
+      context: build/checkmk
+      args:
+        checkmk_version: ${CHECKMK_VERSION}
+      tags:
+        - phpughh/roadrunner/checkmk:${CHECKMK_VERSION_MAJOR}.${CHECKMK_VERSION_MINOR}.${CHECKMK_VERSION_BUGFIX}
+        - phpughh/roadrunner/checkmk:${CHECKMK_VERSION_MAJOR}.${CHECKMK_VERSION_MINOR}
+        - phpughh/roadrunner/checkmk:${CHECKMK_VERSION_MAJOR}
+        - phpughh/roadrunner/checkmk:latest
+    image: phpughh/roadrunner/checkmk:${CHECKMK_VERSION}
+
   dev-cli:
     build:
       context: build/dev-cli

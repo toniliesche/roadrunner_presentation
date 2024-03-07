@@ -18,12 +18,12 @@ processors:
         - field: "timestamp"
           pattern: "\\."
           replacement: ""
-      ignore_missing: false
+      ignore_missing: true
       fail_on_error: false
   - timestamp:
       field: timestamp
       target_field: "@timestamp"
-      ignore_missing: false
+      ignore_missing: true
       ignore_failure: false
       layouts:
         - UNIX_MS
@@ -74,6 +74,4 @@ processors:
 output.logstash:
   hosts: [ "graylog:5044" ]
 
-logging.to_files: true
-logging.to_syslog: false
 logging.to_stderr: true

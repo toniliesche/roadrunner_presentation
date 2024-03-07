@@ -1,5 +1,8 @@
 SHELL := /bin/bash
-build-docker: build-nginx-base build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik build-grafana build-prometheus build-portainer build-graylog build-mongo build-opensearch build-filebeat build-ubuntu build-graylog-sidecar
+build-docker: build-nginx-base build-nginx build-php-fpm build-php-fpm-dev build-php-rr build-php-rr-dev build-mariadb build-dev-cli build-otel-collector build-zipkin build-traefik build-grafana build-prometheus build-portainer build-graylog build-mongo build-opensearch build-filebeat build-ubuntu build-graylog-sidecar build-checkmk
+
+build-checkmk:
+	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain checkmk
 
 build-dev-cli: build-php-fpm
 	docker compose --env-file=docker/.env -f docker/docker-compose.build.yml build --progress=plain dev-cli
