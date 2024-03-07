@@ -8,7 +8,7 @@ use ToniLiesche\Roadrunner\Infrastructure\Http\Services\RequestParser;
 
 trait RequestParserAwareTrait
 {
-    private RequestParser $requestParser;
+    private readonly RequestParser $requestParser;
 
     private function getRequestParser(): RequestParser {
         if (!isset($this->requestParser)) {

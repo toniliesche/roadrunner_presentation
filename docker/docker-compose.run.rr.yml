@@ -8,6 +8,8 @@ services:
     container_name: php
     hostname: php
     image: phpughh/roadrunner/php:${PHP_VERSION}-rr
+    environment:
+      - MODE=${MODE}
     volumes:
       - ../:/var/www/webapp
     labels:

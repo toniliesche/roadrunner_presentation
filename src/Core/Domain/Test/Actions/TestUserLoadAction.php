@@ -34,7 +34,7 @@ readonly final class TestUserLoadAction extends AbstractAPIAction
 
         $userId = $this->getRequestParser()->getNumericQueryParam($request, 'userId');
         Logging::audit()?->log('Accessing test user page.', ['userId' => $userId]);
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 1000; $i++) {
             $response = $this->userService->getUser('http://www.phpug.hh', $userId);
         }
 

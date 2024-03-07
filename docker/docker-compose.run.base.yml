@@ -311,6 +311,7 @@ services:
       - MYSQL_HOST=mariadb
       - MYSQL_USER=zipkin
       - MYSQL_PASS=zipkin
+      - JAVA_OPTS=-Xms1g -Xmx1g -XX:+ExitOnOutOfMemoryError
     networks:
       - default
     labels:

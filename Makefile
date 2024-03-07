@@ -104,17 +104,23 @@ pre-up:
 	sudo mkdir -p tmp/{cache,log,log,proxies}
 	sudo chown -R 82:82 tmp/*
 
-up: pre-up
-	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh up -d --remove-orphans
+up: pre-up configure-app-dev
+	MODE=dev docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh up -d --remove-orphans
 
-up-dev: pre-up
-	docker compose --env-file=docker/.env -f docker/docker-compose.run.dev.yml -p phpughh up -d --remove-orphans
+up-dev: pre-up configure-app-dev
+	MODE=dev docker compose --env-file=docker/.env -f docker/docker-compose.run.dev.yml -p phpughh up -d --remove-orphans
 
-up-rr: configure-rr-live pre-up
-	docker compose --env-file=docker/.env -f docker/docker-compose.run.rr.yml -p phpughh up -d --remove-orphans
+up-perf: pre-up configure-app-perf
+	MODE=perf docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh up -d --remove-orphans
 
-up-rr-dev: configure-rr-dev pre-up
-	docker compose --env-file=docker/.env -f docker/docker-compose.run.rr.dev.yml -p phpughh up -d --remove-orphans
+up-rr: configure-rr-live pre-up configure-app-dev
+	MODE=dev docker compose --env-file=docker/.env -f docker/docker-compose.run.rr.yml -p phpughh up -d --remove-orphans
+
+up-rr-dev: configure-rr-dev pre-up configure-app-dev
+	MODE=dev docker compose --env-file=docker/.env -f docker/docker-compose.run.rr.dev.yml -p phpughh up -d --remove-orphans
+
+up-rr-perf: configure-rr-live pre-up configure-app-perf
+	MODE=perf docker compose --env-file=docker/.env -f docker/docker-compose.run.rr.yml -p phpughh up -d --remove-orphans
 
 init-db:
 	docker compose --env-file=docker/.env -f docker/docker-compose.run.yml -p phpughh exec dev-cli sh -c "mysql < roadrunner/res/init.sql"
@@ -134,6 +140,14 @@ cli:
 
 rr:
 	docker exec php rr reset
+
+configure-app-dev:
+	rm -f res/config.yaml
+	ln -s config.dev.yaml res/config.yaml
+
+configure-app-perf:
+	rm -f res/config.yaml
+	ln -s config.live.yaml res/config.yaml
 
 configure-rr-dev:
 	rm -f .rr.yaml

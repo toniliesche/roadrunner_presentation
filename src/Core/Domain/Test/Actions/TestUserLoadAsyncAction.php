@@ -37,9 +37,9 @@ readonly final class TestUserLoadAsyncAction extends AbstractAPIAction
 
         $userId = $this->getRequestParser()->getNumericQueryParam($request, 'userId');
         Logging::audit()?->log('Accessing test user async page.', ['userId' => $userId]);
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 1000; $i++) {
             $promises = [];
-            for ($j = 0; $j < 2; $j++) {
+            for ($j = 0; $j < 8; $j++) {
                 $promises[] = $this->userService->getUserAsync('http://www.phpug.hh', $userId);
             }
 

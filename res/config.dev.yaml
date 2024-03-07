@@ -19,7 +19,7 @@ database:
 framework:
   di:
     cachePath: /var/www/webapp/tmp/cache/php-di
-    debug: false
+    debug: true
     cache: false
     compile: false
     proxies: false
@@ -34,7 +34,7 @@ framework:
     debug: false
   router:
     cachePath: /var/www/webapp/tmp/cache/fast-route
-    debug: false
+    debug: true
     cache: false
   templating:
     baseVars:
@@ -43,4 +43,5 @@ framework:
     cachePath: /var/www/webapp/tmp/cache/twig
     cache: false
     templatePath: /var/www/webapp/templates
+  tracing: true
 ...

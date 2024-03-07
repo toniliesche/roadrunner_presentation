@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ToniLiesche\Roadrunner\Core\Application\Config\Models;
 
 use ToniLiesche\Roadrunner\Core\Application\Config\Exceptions\ComponentNotConfiguredException;
+use ToniLiesche\Roadrunner\Core\Application\Config\Exceptions\InvalidConfigValueException;
 use ToniLiesche\Roadrunner\Core\Application\Config\Exceptions\MissingConfigValueException;
 
 readonly final class FrameworkConfig
@@ -17,7 +18,10 @@ readonly final class FrameworkConfig
 
     private TemplatingConfig $templatingConfig;
 
+    private bool $tracingEnabled;
+
     /**
+     * @throws InvalidConfigValueException
      * @throws MissingConfigValueException
      */
     public function __construct(array $data = [])
@@ -29,6 +33,7 @@ readonly final class FrameworkConfig
             throw new MissingConfigValueException('Missing mandatory section "router" in framework config section');
         }
 
+        $this->tracingEnabled = $data['tracing'] ?? false;
         $this->diConfig = new DIConfig($data['di']);
         $this->logConfig = new LogConfig($data['log'] ?? []);
         $this->routerConfig = new RouterConfig($data['router']);
@@ -59,5 +64,10 @@ readonly final class FrameworkConfig
     public function getTemplatingConfig(): TemplatingConfig
     {
         return $this->templatingConfig ?? throw new ComponentNotConfiguredException('Templating engine has not been configured in framework config section.');
+    }
+
+    public function isTracingEnabled(): bool
+    {
+        return $this->tracingEnabled;
     }
 }

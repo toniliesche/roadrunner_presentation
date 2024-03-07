@@ -9,7 +9,10 @@ use OpenTelemetry\API\Trace\TracerInterface;
 use OpenTelemetry\Context\ScopeInterface;
 use OpenTelemetry\SDK\Trace\TracerProviderFactory;
 use OpenTelemetry\SDK\Trace\TracerProviderInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use ToniLiesche\Roadrunner\Core\Application\Config\Models\Config;
 
 class Tracing
 {
@@ -23,13 +26,30 @@ class Tracing
 
     private static ScopeInterface $spanScope;
 
+    private static bool $enabled;
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public static function init(ContainerInterface $container): void
     {
+        $config = $container->get(Config::class);
+        self::$enabled = $config->getFrameworkConfig()->isTracingEnabled();
+
+        if (false === self::$enabled) {
+            return;
+        }
+
         self::$factory = new TracerProviderFactory();
     }
 
     public static function start(string $span): void
     {
+        if (false === self::$enabled) {
+            return;
+        }
+
         self::$tracerProvider = self::$factory->create();
         self::$requestTracer = self::$tracerProvider->getTracer('application');
 
@@ -41,6 +61,10 @@ class Tracing
 
     public static function finish(): void
     {
+        if (false === self::$enabled) {
+            return;
+        }
+
         self::$spanScope?->detach();
         self::$span?->end();
         self::$tracerProvider?->shutdown();
@@ -48,6 +72,10 @@ class Tracing
 
     public static function addEvent(string $message, iterable $attributes = [], int $timestamp = null): void
     {
+        if (false === self::$enabled) {
+            return;
+        }
+
         self::$span->addEvent($message, $attributes, $timestamp);
     }
 }

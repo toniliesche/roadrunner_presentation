@@ -17,6 +17,7 @@ use Doctrine\ORM\ORMSetup;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use ToniLiesche\Roadrunner\Core\Application\Config\Exceptions\MissingConfigValueException;
 use ToniLiesche\Roadrunner\Core\Application\Config\Models\Config;
@@ -48,7 +49,8 @@ readonly final class EntityManagerFactory
         }
 
         $databaseConfig = $config->getDatabaseConfig();
-        $configuration = $this->buildConfig($databaseConfig, $container);
+        $runtime = $config->getSystemConfig()->getRuntime();
+        $configuration = $this->buildConfig($databaseConfig, $container, $runtime);
         $connection = DriverManager::getConnection(
             $this->buildParams($databaseConfig),
             $configuration,
@@ -57,7 +59,7 @@ readonly final class EntityManagerFactory
 
         $entityManager = new EntityManager($connection, $configuration);
 
-        if (PHPRuntime::ROADRUNNER === $config->getSystemConfig()->getRuntime()) {
+        if (PHPRuntime::ROADRUNNER === $runtime) {
             $roadrunnerRequestCleaningService = $container->get(RoadrunnerRequestCleaningService::class);
 
             $entityManagerWrapper = new EntityManagerWrapper($entityManager);
@@ -86,10 +88,11 @@ readonly final class EntityManagerFactory
      * @throws FileSystemException
      * @throws NotFoundExceptionInterface
      */
-    private function buildConfig(DatabaseConfig $databaseConfig, ContainerInterface $container): Configuration
-    {
-        $fileSystemService = $container->get(FileSystemService::class);
-
+    private function buildConfig(
+        DatabaseConfig $databaseConfig,
+        ContainerInterface $container,
+        PHPRuntime $runtime
+    ): Configuration {
         $config = ORMSetup::createAttributeMetadataConfiguration(
             $databaseConfig->getEntityPaths(),
             $databaseConfig->isDebugEnabled(),
@@ -106,6 +109,23 @@ readonly final class EntityManagerFactory
 
             return $config;
         }
+
+        match ($runtime) {
+            default => $this->configureInMemoryCache($config),
+            PHPRuntime::PHP_FPM => $this->configureFileCache($databaseConfig, $container, $config),
+        };
+
+        return $config;
+    }
+
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws FileSystemException
+     * @throws ContainerExceptionInterface
+     */
+    private function configureFileCache(DatabaseConfig $databaseConfig, ContainerInterface $container, Configuration $config): void
+    {
+        $fileSystemService = $container->get(FileSystemService::class);
 
         $config->setAutoGenerateProxyClasses(AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED);
         $metadataCacheDirectory = new Directory(['basePath' => $databaseConfig->getCachePath(), 'path' => 'metadata']);
@@ -137,7 +157,16 @@ readonly final class EntityManagerFactory
         $config->setMetadataCache($metaCache);
         $config->setHydrationCache($hydrationCache);
         $config->setQueryCache($queryCache);
+    }
 
-        return $config;
+    private function configureInMemoryCache(Configuration $config): void
+    {
+        $metaCache = new ArrayAdapter();
+        $hydrationCache = new ArrayAdapter();
+        $queryCache = new ArrayAdapter();
+
+        $config->setMetadataCache($metaCache);
+        $config->setHydrationCache($hydrationCache);
+        $config->setQueryCache($queryCache);
     }
 }

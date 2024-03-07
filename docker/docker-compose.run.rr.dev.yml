@@ -12,6 +12,7 @@ services:
       - XDEBUG_HOST=${PHP_XDEBUG_HOST}
       - XDEBUG_PORT=${PHP_XDEBUG_PORT}
       - XDEBUG_CONNECT_ALWAYS=${PHP_XDEBUG_CONNECT_ALWAYS}
+      - MODE=${MODE}
     volumes:
       - ../:/var/www/webapp
     labels:
